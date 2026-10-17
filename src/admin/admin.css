@@ -1,0 +1,677 @@
+/* ═══════════════════════════════════════════════════════════
+   ARCHITECTURAL LUXURY DESIGN SYSTEM (REACT ADMIN CONSOLE)
+   Light Theme Exclusive
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --admin-canvas: #FBF8F1;
+  --admin-surface: #F5EFE6;
+  --admin-surface-hover: #ECE4D6;
+  --admin-card: #FFFFFF;
+  --admin-card-hover: #FCFBF8;
+  --admin-input-bg: #FAF7F0;
+  
+  --admin-text-main: #181613;
+  --admin-text-muted: #544F46;
+  --admin-text-subtle: #766F64;
+  --admin-text-faint: #9E9689;
+
+  --admin-gold: #8C6D23;
+  --admin-gold-light: #C5A059;
+  --admin-gold-dark: #634C15;
+  --admin-gold-glow: rgba(140, 109, 35, 0.12);
+
+  --admin-border: #E8DEC8;
+  --admin-border-subtle: #EFE8D8;
+  --admin-border-strong: #C5A059;
+
+  --admin-success: #15803d;
+  --admin-danger: #dc2626;
+  --admin-info: #2563eb;
+}
+
+.admin-layout {
+  min-height: 100vh;
+  background-color: var(--admin-canvas);
+  color: var(--admin-text-main);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   1. LOGIN PORTAL
+   ═══════════════════════════════════════════════════════════ */
+.admin-login-wrapper {
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 20%, #FFFFFF 0%, var(--admin-canvas) 85%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.admin-login-card {
+  width: 100%;
+  max-width: 440px;
+  background: #FFFFFF;
+  border: 1px solid var(--admin-border);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 16px 40px rgba(24, 22, 19, 0.06);
+  text-align: center;
+}
+
+.login-logo-container {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  border-radius: 18px;
+  background: #FAF7F0;
+  border: 1px solid var(--admin-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(140, 109, 35, 0.08);
+  overflow: hidden;
+}
+
+.login-logo-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.admin-login-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--admin-text-main);
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.admin-login-subtitle {
+  font-size: 0.85rem;
+  color: var(--admin-text-subtle);
+  margin-bottom: 28px;
+}
+
+.admin-login-form {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   2. APP SHELL & TOP NAVIGATION
+   ═══════════════════════════════════════════════════════════ */
+.admin-header {
+  height: 70px;
+  background: rgba(251, 248, 241, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--admin-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.admin-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.admin-brand-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--admin-border);
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.admin-brand-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.admin-brand-info h1 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--admin-text-main);
+  line-height: 1.2;
+}
+
+.admin-brand-info span {
+  font-size: 0.72rem;
+  color: var(--admin-gold);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-db-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  background: #FFFFFF;
+  border: 1px solid var(--admin-border);
+  color: var(--admin-text-subtle);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.status-dot.active {
+  background-color: var(--admin-success);
+  box-shadow: 0 0 8px rgba(21, 128, 61, 0.4);
+}
+.status-dot.fallback {
+  background-color: #d97706;
+  box-shadow: 0 0 8px rgba(217, 119, 6, 0.4);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   3. SIDEBAR & MAIN WORKSPACE
+   ═══════════════════════════════════════════════════════════ */
+.admin-main-container {
+  display: flex;
+  flex: 1;
+  min-height: calc(100vh - 70px);
+}
+
+.admin-sidebar {
+  width: 260px;
+  background: var(--admin-surface);
+  border-right: 1px solid var(--admin-border);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--admin-text-muted);
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.admin-nav-item:hover {
+  background: var(--admin-surface-hover);
+  color: var(--admin-text-main);
+}
+
+.admin-nav-item.active {
+  background: #FFFFFF;
+  color: var(--admin-gold-dark);
+  border-color: var(--admin-border);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(24, 22, 19, 0.04);
+}
+
+.admin-nav-item i {
+  font-size: 0.95rem;
+  color: var(--admin-gold);
+  width: 20px;
+  text-align: center;
+}
+
+.admin-content-area {
+  flex: 1;
+  padding: 32px 40px;
+  max-width: 1200px;
+  overflow-y: auto;
+}
+
+.admin-section-header {
+  margin-bottom: 24px;
+}
+
+.admin-section-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--admin-text-main);
+  letter-spacing: -0.02em;
+}
+
+.admin-section-desc {
+  font-size: 0.86rem;
+  color: var(--admin-text-subtle);
+  margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   4. FORM ELEMENTS & CARDS
+   ═══════════════════════════════════════════════════════════ */
+.admin-card {
+  background: #FFFFFF;
+  border: 1px solid var(--admin-border);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(24, 22, 19, 0.03);
+}
+
+.admin-form-group {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--admin-text-muted);
+}
+
+.admin-input,
+.admin-textarea,
+.admin-select {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--admin-input-bg);
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: var(--admin-text-main);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.admin-input:focus,
+.admin-textarea:focus,
+.admin-select:focus {
+  border-color: var(--admin-gold);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px var(--admin-gold-glow);
+}
+
+.admin-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.admin-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+/* Buttons */
+.btn-gold {
+  background: linear-gradient(135deg, var(--admin-gold) 0%, var(--admin-gold-dark) 100%);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(140, 109, 35, 0.25);
+}
+
+.btn-gold:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(140, 109, 35, 0.35);
+}
+
+.btn-secondary {
+  background: #FFFFFF;
+  color: var(--admin-text-main);
+  border: 1px solid var(--admin-border);
+  font-weight: 500;
+  font-size: 0.86rem;
+  padding: 9px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--admin-surface);
+  border-color: var(--admin-gold);
+}
+
+.btn-danger {
+  background: #FFF5F5;
+  color: var(--admin-danger);
+  border: 1px solid #FED7D7;
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: var(--admin-danger);
+  color: #FFFFFF;
+  border-color: var(--admin-danger);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   5. SKILLS MATRIX LUXURY ARCHITECTURE
+   ═══════════════════════════════════════════════════════════ */
+.react-skill-card {
+  background: #FFFFFF;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(24, 22, 19, 0.03);
+  display: grid;
+  grid-template-columns: minmax(280px, 1.4fr) minmax(220px, 1fr) auto;
+  align-items: center;
+  gap: 20px;
+  transition: all 0.2s ease;
+}
+
+.react-skill-card:hover {
+  border-color: var(--admin-gold-light);
+  box-shadow: 0 4px 14px rgba(140, 109, 35, 0.08);
+  background: var(--admin-card-hover);
+}
+
+.react-skill-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.react-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.react-input-wrap i {
+  position: absolute;
+  left: 12px;
+  color: var(--admin-gold);
+  font-size: 0.82rem;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.react-input-wrap input {
+  width: 100%;
+  padding-left: 36px !important;
+}
+
+.react-skill-proficiency {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--admin-canvas);
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--admin-border-subtle);
+}
+
+.react-proficiency-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.react-proficiency-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--admin-text-subtle);
+}
+
+.react-slider-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--admin-gold-dark);
+  background: #FFFFFF;
+  border: 1px solid var(--admin-border);
+  padding: 2px 10px;
+  border-radius: 9999px;
+  min-width: 52px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.react-slider-track {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.react-slider-input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #E5DEC9;
+  border-radius: 9999px;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.react-slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--admin-gold);
+  border: 3px solid #FFFFFF;
+  box-shadow: 0 2px 6px rgba(140, 109, 35, 0.4);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.react-slider-input::-webkit-slider-thumb:hover {
+  transform: scale(1.18);
+}
+
+.react-delete-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: #FFF5F5;
+  border: 1px solid #FED7D7;
+  color: var(--admin-danger);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.react-delete-btn:hover {
+  background: var(--admin-danger);
+  border-color: var(--admin-danger);
+  color: #FFFFFF;
+  transform: scale(1.06);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   6. METRICS & OVERVIEW CARDS
+   ═══════════════════════════════════════════════════════════ */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-box {
+  background: #FFFFFF;
+  border: 1px solid var(--admin-border);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(24, 22, 19, 0.03);
+}
+
+.metric-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--admin-text-subtle);
+  margin-bottom: 8px;
+}
+
+.metric-num {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--admin-gold-dark);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   7. MESSAGES / INQUIRIES LIST
+   ═══════════════════════════════════════════════════════════ */
+.inquiry-card {
+  background: #FFFFFF;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+.inquiry-card.unread {
+  border-left: 4px solid var(--admin-gold);
+  background: #FCFBF8;
+}
+
+.inquiry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.inquiry-sender {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--admin-text-main);
+}
+
+.inquiry-email {
+  font-size: 0.82rem;
+  color: var(--admin-text-subtle);
+  font-family: 'JetBrains Mono', monospace;
+  margin-left: 8px;
+}
+
+.inquiry-time {
+  font-size: 0.76rem;
+  color: var(--admin-text-faint);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.inquiry-body {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--admin-text-muted);
+  background: var(--admin-canvas);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+.inquiry-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+/* Toast */
+.admin-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 14px 20px;
+  border-radius: 10px;
+  background: #FFFFFF;
+  border: 1px solid var(--admin-border);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  z-index: 1000;
+}
+
+@media (max-width: 900px) {
+  .admin-main-container {
+    flex-direction: column;
+  }
+  .admin-sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 12px;
+  }
+  .react-skill-card {
+    grid-template-columns: 1fr;
+  }
+}

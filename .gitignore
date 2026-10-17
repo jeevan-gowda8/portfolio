@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Firebase
+.firebase/
+.firebaserc
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Secrets — never commit real credentials
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/

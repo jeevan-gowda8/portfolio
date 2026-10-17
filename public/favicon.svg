@@ -1,0 +1,9 @@
+<svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="44" height="44" rx="12" fill="#181613" />
+  <rect x="1" y="1" width="42" height="42" rx="11" stroke="#C5A059" stroke-width="1.5" />
+  <rect x="3.5" y="3.5" width="37" height="37" rx="9" stroke="#C5A059" stroke-width="0.75" stroke-opacity="0.35" />
+  <text x="22" y="28" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="800" font-size="19" letter-spacing="-0.04em">
+    <tspan fill="#FBF8F1">J</tspan><tspan fill="#C5A059">G</tspan>
+  </text>
+  <rect x="18" y="33" width="8" height="1.5" rx="0.75" fill="#C5A059" />
+</svg>
