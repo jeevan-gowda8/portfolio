@@ -217,12 +217,17 @@ export default function AdminApp() {
   // Projects Mutation Handlers
   const handleAddProject = () => {
     const newProj = {
-      title: "New Architectural System",
-      category: "Artificial Intelligence",
-      description: "Comprehensive end-to-end intelligent pipeline with high-throughput inference.",
-      tags: ["Python", "FastAPI", "React", "Docker"],
-      github: "https://github.com/Jeevangowda080",
-      demo: "",
+      id: `project-${Date.now()}`,
+      title: "New Project",
+      subtitle: "",
+      category: "Web Development",
+      badge: "",
+      metaYear: String(new Date().getFullYear()),
+      description: "",
+      highlights: [],
+      tags: [],
+      githubUrl: "",
+      demoUrl: "",
       featured: true
     };
     setPortfolio(prev => ({
@@ -244,7 +249,11 @@ export default function AdminApp() {
   const handleUpdateProject = (index, field, value) => {
     setPortfolio(prev => {
       const updated = [...(prev.projects || [])];
-      updated[index] = { ...updated[index], [field]: value };
+      const next = { ...updated[index], [field]: value };
+      // Drop the old github/demo keys once the standard githubUrl/demoUrl are edited
+      if (field === "githubUrl") delete next.github;
+      if (field === "demoUrl") delete next.demo;
+      updated[index] = next;
       return { ...prev, projects: updated };
     });
   };
@@ -847,6 +856,42 @@ export default function AdminApp() {
                     </div>
                   </div>
 
+                  <div className="admin-grid-2">
+                    <div className="admin-form-group">
+                      <label className="admin-label">Subtitle (optional)</label>
+                      <input
+                        type="text"
+                        className="admin-input"
+                        placeholder="e.g. Official Government Web Portal"
+                        value={proj.subtitle || ""}
+                        onChange={(e) => handleUpdateProject(pIdx, "subtitle", e.target.value)}
+                      />
+                    </div>
+
+                    <div className="admin-grid-2" style={{ gap: "12px" }}>
+                      <div className="admin-form-group">
+                        <label className="admin-label">Badge (optional)</label>
+                        <input
+                          type="text"
+                          className="admin-input"
+                          placeholder="e.g. Client Project"
+                          value={proj.badge || ""}
+                          onChange={(e) => handleUpdateProject(pIdx, "badge", e.target.value)}
+                        />
+                      </div>
+                      <div className="admin-form-group">
+                        <label className="admin-label">Year</label>
+                        <input
+                          type="text"
+                          className="admin-input"
+                          placeholder="2025"
+                          value={proj.metaYear || ""}
+                          onChange={(e) => handleUpdateProject(pIdx, "metaYear", e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="admin-form-group">
                     <label className="admin-label">Description</label>
                     <textarea
@@ -857,24 +902,46 @@ export default function AdminApp() {
                     />
                   </div>
 
+                  <div className="admin-form-group">
+                    <label className="admin-label">Key Highlights (one per line, optional)</label>
+                    <textarea
+                      rows={3}
+                      className="admin-textarea"
+                      placeholder={"Built responsive pages for 10+ schemes\nAdmin panel for publishing reports"}
+                      value={(proj.highlights || []).join("\n")}
+                      onChange={(e) => handleUpdateProject(
+                        pIdx,
+                        "highlights",
+                        e.target.value.split("\n").map(h => h.trimStart())
+                      )}
+                      onBlur={(e) => handleUpdateProject(
+                        pIdx,
+                        "highlights",
+                        e.target.value.split("\n").map(h => h.trim()).filter(Boolean)
+                      )}
+                    />
+                  </div>
+
                   <div className="admin-grid-2">
                     <div className="admin-form-group">
-                      <label className="admin-label">GitHub Repository Link</label>
+                      <label className="admin-label">GitHub Repository Link (leave empty to hide)</label>
                       <input
-                        type="url"
+                        type="text"
                         className="admin-input"
-                        value={proj.github || ""}
-                        onChange={(e) => handleUpdateProject(pIdx, "github", e.target.value)}
+                        placeholder="https://github.com/jeevan-gowda8/your-repo"
+                        value={proj.githubUrl ?? proj.github ?? ""}
+                        onChange={(e) => handleUpdateProject(pIdx, "githubUrl", e.target.value)}
                       />
                     </div>
 
                     <div className="admin-form-group">
-                      <label className="admin-label">Live Demo URL</label>
+                      <label className="admin-label">Live Demo URL (leave empty to hide)</label>
                       <input
-                        type="url"
+                        type="text"
                         className="admin-input"
-                        value={proj.demo || ""}
-                        onChange={(e) => handleUpdateProject(pIdx, "demo", e.target.value)}
+                        placeholder="https://your-project.netlify.app"
+                        value={proj.demoUrl ?? proj.demo ?? ""}
+                        onChange={(e) => handleUpdateProject(pIdx, "demoUrl", e.target.value)}
                       />
                     </div>
                   </div>

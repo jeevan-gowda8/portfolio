@@ -36,7 +36,7 @@ export const portfolioData = {
       metaYear: "2024",
       tags: ["Python", "OpenAI API", "Picovoice", "SpeechRecognition", "Automation"],
       githubUrl: "https://github.com/jeevan-gowda8",
-      demoUrl: "https://github.com/jeevan-gowda8",
+      demoUrl: "",
       highlights: [
         "Offline custom hotword detection with zero cloud latency",
         "NLP intent classification & multi-turn dialog parsing",
@@ -56,7 +56,7 @@ export const portfolioData = {
       metaYear: "2024",
       tags: ["Flutter", "Dart", "REST APIs", "Cloud IoT", "MQTT", "Firebase"],
       githubUrl: "https://github.com/jeevan-gowda8",
-      demoUrl: "https://github.com/jeevan-gowda8",
+      demoUrl: "",
       highlights: [
         "Sub-100ms real-time metric streams with MQTT and WebSocket",
         "Interactive fluid charts with sensor historical trend analysis",
@@ -76,7 +76,7 @@ export const portfolioData = {
       metaYear: "2024",
       tags: ["PyTorch", "OpenCV", "YOLOv8", "CUDA", "Python"],
       githubUrl: "https://github.com/jeevan-gowda8",
-      demoUrl: "https://github.com/jeevan-gowda8",
+      demoUrl: "",
       highlights: [
         "Over 60 FPS real-time detection on consumer GPU hardware",
         "Custom dataset augmentation pipeline for high-accuracy generalization",
@@ -96,7 +96,7 @@ export const portfolioData = {
       metaYear: "2024",
       tags: ["React", "JavaScript", "Node.js", "Firebase", "TailwindCSS"],
       githubUrl: "https://github.com/jeevan-gowda8",
-      demoUrl: "https://github.com/jeevan-gowda8",
+      demoUrl: "",
       highlights: [
         "Ultra-fast virtualized data grids rendering 10k+ event items smoothly",
         "Dynamic widget layout with drag-and-drop customization",

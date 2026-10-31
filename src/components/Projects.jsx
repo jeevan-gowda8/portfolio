@@ -4,6 +4,37 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ScrollReveal } from "./ScrollReveal";
 import TiltCard from "./TiltCard";
 
+// Adds https:// when missing and drops empty or placeholder values
+function normalizeUrl(raw) {
+  const value = (raw || "").trim();
+  if (!value || value === "#") return "";
+  return /^https?:\/\//i.test(value) ? value : `https://${value}`;
+}
+
+// Reads links saved by the admin panel (older github/demo keys included);
+// a demo link that just repeats the GitHub link is treated as missing
+export function getProjectLinks(project) {
+  const github = normalizeUrl(project.githubUrl || project.github);
+  let demo = normalizeUrl(project.demoUrl || project.demo);
+  if (demo && demo === github) demo = "";
+  return { github, demo };
+}
+
+// Category tabs match free-text categories typed in the admin panel
+const CATEGORY_KEYWORDS = {
+  ai: ["ai", "ml", "machine", "intelligen", "vision", "deep", "nlp"],
+  mobile: ["mobile", "iot", "embedded", "flutter", "android", "hardware"],
+  web: ["web", "full", "frontend", "backend", "site", "portal"]
+};
+
+function matchesCategory(project, categoryId) {
+  if (categoryId === "all") return true;
+  const text = `${project.category || ""} ${project.badge || ""}`.toLowerCase();
+  return (CATEGORY_KEYWORDS[categoryId] || [categoryId]).some((k) =>
+    new RegExp(`(^|[^a-z])${k}`).test(text)
+  );
+}
+
 export default function Projects({ data }) {
   const projects = data?.projects || [];
   const [activeCategory, setActiveCategory] = useState("all");
@@ -29,9 +60,8 @@ export default function Projects({ data }) {
     { id: "web", label: "WEB PLATFORMS" }
   ];
 
-  const filteredProjects = activeCategory === "all"
-    ? projects
-    : projects.filter((p) => p.category.toLowerCase().includes(activeCategory));
+  const filteredProjects = projects.filter((p) => matchesCategory(p, activeCategory));
+  const selectedLinks = selectedProject ? getProjectLinks(selectedProject) : {};
 
   return (
     <section id="projects" className="section">
@@ -92,6 +122,8 @@ export default function Projects({ data }) {
         <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
           {filteredProjects.map((project, idx) => {
             const indexStr = idx < 9 ? `0${idx + 1}` : `${idx + 1}`;
+            const links = getProjectLinks(project);
+            const badge = project.badge || project.metaLabel || project.category;
             return (
               <TiltCard
                 max={3}
@@ -138,12 +170,12 @@ export default function Projects({ data }) {
                 <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                   <div>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.85rem", marginBottom: "1rem" }}>
-                      <span className="chip chip-gold">
-                        {project.badge || project.metaLabel || "COMMISSION"}
-                      </span>
-                      <span className="label-sm" style={{ color: "var(--charcoal-subtle)", marginLeft: "auto" }}>
-                        {project.metaYear || "2024"}
-                      </span>
+                      {badge && <span className="chip chip-gold">{badge}</span>}
+                      {project.metaYear && (
+                        <span className="label-sm" style={{ color: "var(--charcoal-subtle)", marginLeft: "auto" }}>
+                          {project.metaYear}
+                        </span>
+                      )}
                     </div>
 
                     <h3 className="headline-md" style={{ marginBottom: "0.5rem" }}>
@@ -181,9 +213,9 @@ export default function Projects({ data }) {
                       <FiArrowRight style={{ fontSize: "0.9rem" }} />
                     </span>
 
-                    {project.githubUrl && (
+                    {links.github && (
                       <a
-                        href={project.githubUrl}
+                        href={links.github}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
@@ -200,9 +232,9 @@ export default function Projects({ data }) {
                         <FiGithub />
                       </a>
                     )}
-                    {project.demoUrl && project.demoUrl !== "#" && (
+                    {links.demo && (
                       <a
-                        href={project.demoUrl}
+                        href={links.demo}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
@@ -264,7 +296,7 @@ export default function Projects({ data }) {
 
                     {/* Tags pill cloud */}
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "2rem" }}>
-                      {project.tags.map((tag, tIdx) => (
+                      {(project.tags || []).map((tag, tIdx) => (
                         <span key={tIdx} className="chip">
                           {tag}
                         </span>
@@ -288,7 +320,7 @@ export default function Projects({ data }) {
                       CATEGORY
                     </span>
                     <span className="label-sm" style={{ fontSize: "11px", color: "var(--accent-gold)", fontWeight: 600 }}>
-                      {project.category?.toUpperCase() || "PRODUCTION"}
+                      {project.category?.toUpperCase() || "GENERAL"}
                     </span>
                   </div>
                 </div>
@@ -385,7 +417,7 @@ export default function Projects({ data }) {
               </p>
 
               {/* Highlights */}
-              {selectedProject.highlights && (
+              {selectedProject.highlights?.length > 0 && (
                 <div style={{ marginBottom: "2rem" }}>
                   <div
                     className="label-sm"
@@ -417,7 +449,7 @@ export default function Projects({ data }) {
                   TECHNOLOGIES USED
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                  {selectedProject.tags?.map((t, idx) => (
+                  {(selectedProject.tags || []).map((t, idx) => (
                     <span
                       key={idx}
                       className="label-sm"
@@ -436,9 +468,9 @@ export default function Projects({ data }) {
 
               {/* Actions with rounded pills */}
               <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-                {selectedProject.githubUrl && (
+                {selectedLinks.github && (
                   <a
-                    href={selectedProject.githubUrl}
+                    href={selectedLinks.github}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn"
@@ -452,9 +484,9 @@ export default function Projects({ data }) {
                     <span>View Source Code</span>
                   </a>
                 )}
-                {selectedProject.demoUrl && selectedProject.demoUrl !== "#" && (
+                {selectedLinks.demo && (
                   <a
-                    href={selectedProject.demoUrl}
+                    href={selectedLinks.demo}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn"
