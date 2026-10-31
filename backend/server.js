@@ -1,19 +1,41 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
 import { supabase, isSupabaseConfigured } from './supabase.js';
 import { defaultPortfolioData } from './defaultData.js';
 
-dotenv.config();
+// Always load backend/.env, whichever folder the server is started from
+dotenv.config({ path: fileURLToPath(new URL('./.env', import.meta.url)) });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// Render sits behind a proxy; trust it so req.ip is the visitor's real address
+app.set('trust proxy', 1);
+
+// CORS: FRONTEND_URL is a comma-separated list of allowed sites (e.g. your Vercel domain).
+// Local dev servers are always allowed. If FRONTEND_URL is unset, every origin is allowed.
+const allowedOrigins = (process.env.FRONTEND_URL || '')
+  .split(',')
+  .map((o) => o.trim().replace(/\/+$/, ''))
+  .filter(Boolean);
+const localOrigin = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+
 app.use(cors({
-  origin: true, // Allow dev and production origins
+  origin(origin, callback) {
+    if (!origin || !allowedOrigins.length || allowedOrigins.includes(origin) || localOrigin.test(origin)) {
+      return callback(null, true);
+    }
+    return callback(null, false);
+  },
   credentials: true
 }));
+
+// Friendly root for uptime monitors and anyone opening the bare URL
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', service: 'JG Portfolio Backend', health: '/api/health' });
+});
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -386,10 +408,15 @@ app.post('/api/messages/mark-all-read', verifyAdmin, async (req, res) => {
 });
 
 // Start Server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`\n═══════════════════════════════════════════════════════════`);
   console.log(`🚀 JG Portfolio Architectural Backend running on port ${PORT}`);
   console.log(`📡 API Base URL: http://localhost:${PORT}/api`);
   console.log(`💾 Database: ${isSupabaseConfigured ? 'Supabase (' + process.env.SUPABASE_URL + ')' : 'Local Memory Mode (Awaiting Supabase keys)'}`);
   console.log(`═══════════════════════════════════════════════════════════\n`);
+});
+
+// Render sends SIGTERM on redeploys; finish in-flight requests before exiting
+process.on('SIGTERM', () => {
+  server.close(() => process.exit(0));
 });
