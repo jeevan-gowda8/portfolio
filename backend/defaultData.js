@@ -10,8 +10,8 @@ export const defaultPortfolioData = {
     resumeUrl: "/assets/documents/resume.pdf",
     socials: {
       github: "https://github.com/jeevan-gowda8",
-      linkedin: "https://linkedin.com/in/jeevan-gowda",
-      instagram: "https://instagram.com/jeevan_gowda_8"
+      linkedin: "https://www.linkedin.com/in/jeevan-gowda8",
+      instagram: "https://www.instagram.com/ll_.jeevan._.gowda._ll"
     },
     stats: [
       { label: "Engineering Practice", value: "3+" },

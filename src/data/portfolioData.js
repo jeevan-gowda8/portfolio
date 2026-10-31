@@ -11,8 +11,8 @@ export const portfolioData = {
     avatar: "/assets/images/logo.png",
     socials: {
       github: "https://github.com/jeevan-gowda8",
-      linkedin: "https://linkedin.com/in/jeevan-gowda",
-      instagram: "https://instagram.com/jeevan_gowda_8",
+      linkedin: "https://www.linkedin.com/in/jeevan-gowda8",
+      instagram: "https://www.instagram.com/ll_.jeevan._.gowda._ll",
       email: "mailto:jeevangowdajeevan080@gmail.com"
     },
     stats: [

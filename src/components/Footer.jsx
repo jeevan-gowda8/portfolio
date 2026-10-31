@@ -82,8 +82,8 @@ export default function Footer({ data }) {
               <div style={{ display: "flex", gap: "0.6rem", marginBottom: "1.5rem" }}>
                 {[
                   { icon: <FiGithub />, href: data?.personal?.socials?.github || "https://github.com/jeevan-gowda8", label: "GitHub" },
-                  { icon: <FiLinkedin />, href: data?.personal?.socials?.linkedin || "https://linkedin.com/in/jeevan-gowda", label: "LinkedIn" },
-                  { icon: <FiInstagram />, href: data?.personal?.socials?.instagram || "https://instagram.com/jeevan_gowda_8", label: "Instagram" },
+                  { icon: <FiLinkedin />, href: data?.personal?.socials?.linkedin || "https://www.linkedin.com/in/jeevan-gowda8", label: "LinkedIn" },
+                  { icon: <FiInstagram />, href: data?.personal?.socials?.instagram || "https://www.instagram.com/ll_.jeevan._.gowda._ll", label: "Instagram" },
                   { icon: <FiMail />, href: data?.personal?.socials?.email || "mailto:jeevangowdajeevan080@gmail.com", label: "Email" }
                 ].map((s, idx) => (
                   <a
