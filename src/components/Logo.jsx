@@ -7,7 +7,7 @@ export default function Logo({ size = 42, className = "" }) {
       style={{
         width: `${size}px`,
         height: `${size}px`,
-        borderRadius: "12px",
+        borderRadius: `${Math.round(size * 0.28)}px`,
         backgroundColor: "var(--charcoal-primary)",
         border: "1.5px solid var(--accent-gold)",
         display: "inline-flex",

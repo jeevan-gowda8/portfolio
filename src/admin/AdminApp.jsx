@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./admin.css";
+import Logo from "../components/Logo";
 import { portfolioData as initialPortfolioData } from "../data/portfolioData";
 import {
   fetchLivePortfolio,
@@ -342,7 +343,7 @@ export default function AdminApp() {
       <div className="admin-login-wrapper">
         <div className="admin-login-card">
           <div className="login-logo-container">
-            <img src="/assets/images/logo.png" alt="Jeevan Gowda Studio" />
+            <Logo size={72} />
           </div>
 
           <h2 className="admin-login-title">Architectural Console</h2>
@@ -424,7 +425,7 @@ export default function AdminApp() {
       <header className="admin-header">
         <div className="admin-header-brand">
           <div className="admin-brand-logo">
-            <img src="/assets/images/logo.png" alt="JG Logo" />
+            <Logo size={40} />
           </div>
           <div className="admin-brand-info">
             <h1>Jeevan Gowda A V</h1>

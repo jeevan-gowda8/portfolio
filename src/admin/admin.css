@@ -63,17 +63,9 @@
 }
 
 .login-logo-container {
-  width: 80px;
-  height: 80px;
-  margin: 0 auto 20px;
-  border-radius: 18px;
-  background: #FAF7F0;
-  border: 1px solid var(--admin-border);
   display: flex;
-  align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(140, 109, 35, 0.08);
-  overflow: hidden;
+  margin: 0 auto 20px;
 }
 
 .login-logo-container img {
@@ -128,15 +120,8 @@
 }
 
 .admin-brand-logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  border: 1px solid var(--admin-border);
-  background: #FFFFFF;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .admin-brand-logo img {
