@@ -400,10 +400,6 @@ export default function AdminApp() {
               <FaLock /> {isLoggingIn ? "Verifying Access..." : "Enter Command Center"}
             </button>
           </form>
-
-          <div style={{ marginTop: "24px", fontSize: "0.78rem", color: "var(--admin-text-faint)" }}>
-            Powered by Supabase & Express REST Architecture
-          </div>
         </div>
 
         {toast && (
