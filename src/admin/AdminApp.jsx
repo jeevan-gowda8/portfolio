@@ -11,7 +11,6 @@ import {
   deleteMessage,
   checkBackendHealth
 } from "../api";
-import { TOGGLEABLE_SECTIONS } from "../siteSettings";
 import {
   FaTachometerAlt,
   FaUserTie,
@@ -219,24 +218,6 @@ export default function AdminApp() {
   const updatePersonal = (field, value) => setPortfolio(p => ({
     ...p,
     personal: { ...p.personal, [field]: value }
-  }));
-
-  const updateSocial = (key, value) => setPortfolio(p => ({
-    ...p,
-    personal: { ...p.personal, socials: { ...(p.personal?.socials || {}), [key]: value } }
-  }));
-
-  const updateSettings = (field, value) => setPortfolio(p => ({
-    ...p,
-    settings: { ...(p.settings || {}), [field]: value }
-  }));
-
-  const updateSectionVisibility = (id, visible) => setPortfolio(p => ({
-    ...p,
-    settings: {
-      ...(p.settings || {}),
-      sections: { ...(p.settings?.sections || {}), [id]: visible }
-    }
   }));
 
   const handleDownloadBackup = () => {
@@ -1155,7 +1136,7 @@ export default function AdminApp() {
               <div className="admin-section-header">
                 <h2 className="admin-section-title">Settings</h2>
                 <p className="admin-section-desc">
-                  Availability, social profiles, visible sections and search appearance. Click <strong>Save &amp; Publish</strong> to apply.
+                  Availability, backup and account. Click <strong>Save &amp; Publish</strong> to apply.
                 </p>
               </div>
 
@@ -1182,74 +1163,6 @@ export default function AdminApp() {
                     placeholder="Available for Projects & Full-time Roles"
                     value={portfolio.personal?.availability || ""}
                     onChange={(e) => updatePersonal("availability", e.target.value)}
-                  />
-                </div>
-              </div>
-
-              {/* Social profiles */}
-              <div className="admin-card">
-                <h3 className="admin-settings-title">Social Profiles</h3>
-                <div className="admin-grid-2">
-                  {[
-                    ["github", "GitHub", "https://github.com/jeevan-gowda8"],
-                    ["linkedin", "LinkedIn", "https://www.linkedin.com/in/your-profile"],
-                    ["instagram", "Instagram", "https://www.instagram.com/your-handle"],
-                    ["email", "Email Link", "mailto:you@example.com"]
-                  ].map(([key, label, placeholder]) => (
-                    <div className="admin-form-group" key={key}>
-                      <label className="admin-label">{label}</label>
-                      <input
-                        type="text"
-                        className="admin-input"
-                        placeholder={placeholder}
-                        value={portfolio.personal?.socials?.[key] || ""}
-                        onChange={(e) => updateSocial(key, e.target.value)}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Section visibility */}
-              <div className="admin-card">
-                <h3 className="admin-settings-title">Visible Sections</h3>
-                <p className="admin-settings-hint">Hidden sections disappear from the page, navigation and footer.</p>
-                <div className="admin-toggle-grid">
-                  {TOGGLEABLE_SECTIONS.map((section) => (
-                    <label className="admin-toggle-row" key={section.id}>
-                      <span><strong>{section.label}</strong></span>
-                      <input
-                        type="checkbox"
-                        className="admin-switch"
-                        checked={portfolio.settings?.sections?.[section.id] !== false}
-                        onChange={(e) => updateSectionVisibility(section.id, e.target.checked)}
-                      />
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* SEO */}
-              <div className="admin-card">
-                <h3 className="admin-settings-title">Search &amp; Sharing</h3>
-                <div className="admin-form-group">
-                  <label className="admin-label">Browser Tab Title</label>
-                  <input
-                    type="text"
-                    className="admin-input"
-                    placeholder="Jeevan Gowda A V — AI & Full-Stack Developer"
-                    value={portfolio.settings?.siteTitle || ""}
-                    onChange={(e) => updateSettings("siteTitle", e.target.value)}
-                  />
-                </div>
-                <div className="admin-form-group" style={{ marginBottom: 0 }}>
-                  <label className="admin-label">Search Description</label>
-                  <textarea
-                    rows={2}
-                    className="admin-textarea"
-                    placeholder="Portfolio of Jeevan Gowda A V — Building intelligent systems with AI, Machine Learning & IoT"
-                    value={portfolio.settings?.metaDescription || ""}
-                    onChange={(e) => updateSettings("metaDescription", e.target.value)}
                   />
                 </div>
               </div>

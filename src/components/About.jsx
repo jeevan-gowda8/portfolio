@@ -68,7 +68,7 @@ export default function About({ data }) {
               }}
             >
               <div>
-                <div className="label-sm" style={{ color: "var(--accent-gold)", marginBottom: "1rem" }}>
+                <div className="label-sm" style={{ color: "var(--gold-text)", marginBottom: "1rem" }}>
                   WHO I AM
                 </div>
                 <h3 className="headline-md" style={{ marginBottom: "1.5rem" }}>
@@ -100,7 +100,7 @@ export default function About({ data }) {
                       transition={{ duration: 0.4, delay: 0.3 + idx * 0.1 }}
                       style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem" }}
                     >
-                      <span style={{ color: "var(--accent-gold)", fontWeight: 700, marginTop: "2px" }}>
+                      <span style={{ color: "var(--gold-text)", fontWeight: 700, marginTop: "2px" }}>
                         —
                       </span>
                       <span className="body-md" style={{ color: "var(--charcoal-primary)" }}>
@@ -142,7 +142,7 @@ export default function About({ data }) {
                   <span className="label-sm" style={{ color: "var(--charcoal-subtle)", display: "block" }}>
                     STATUS
                   </span>
-                  <span className="label-md" style={{ color: "var(--accent-gold)", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span className="label-md" style={{ color: "var(--gold-text)", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
                     {data?.personal?.openToWork !== false ? (
                       <>
                         <span className="status-bullet" />
@@ -199,16 +199,16 @@ export default function About({ data }) {
                       marginBottom: "1.25rem"
                     }}
                   >
-                    <span className="label-sm" style={{ color: "var(--accent-gold)" }}>
+                    <span className="label-sm" style={{ color: "var(--gold-text)" }}>
                       FOCUS {pillar.index}
                     </span>
                     <span className="label-sm" style={{ color: "var(--charcoal-subtle)" }}>
                       SPECIALIZATION
                     </span>
                   </div>
-                  <h4 className="headline-sm" style={{ marginBottom: "0.85rem" }}>
+                  <h3 className="headline-sm" style={{ marginBottom: "0.85rem" }}>
                     {pillar.title}
-                  </h4>
+                  </h3>
                   <p className="body-md" style={{ margin: 0 }}>
                     {pillar.desc}
                   </p>
@@ -221,7 +221,7 @@ export default function About({ data }) {
                     borderTop: "1px solid var(--gold-border)"
                   }}
                 >
-                  <span className="label-sm" style={{ color: "var(--accent-gold)" }}>
+                  <span className="label-sm" style={{ color: "var(--gold-text)" }}>
                     CORE STRENGTH
                   </span>
                 </div>

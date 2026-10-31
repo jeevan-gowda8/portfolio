@@ -47,7 +47,7 @@ export default function Footer({ data }) {
 
             {/* Directory Navigation */}
             <div>
-              <div className="label-sm" style={{ color: "var(--accent-gold)", marginBottom: "1rem" }}>
+              <div className="label-sm" style={{ color: "var(--gold-text)", marginBottom: "1rem" }}>
                 NAVIGATION
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
@@ -71,7 +71,7 @@ export default function Footer({ data }) {
 
             {/* Connect & Scroll Up */}
             <div>
-              <div className="label-sm" style={{ color: "var(--accent-gold)", marginBottom: "1rem" }}>
+              <div className="label-sm" style={{ color: "var(--gold-text)", marginBottom: "1rem" }}>
                 CONNECT
               </div>
               <div style={{ display: "flex", gap: "0.6rem", marginBottom: "1.5rem" }}>

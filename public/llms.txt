@@ -1,0 +1,24 @@
+# Jeevan Gowda A V
+
+> Portfolio of Jeevan Gowda A V, a Full-Stack Developer and AI/ML Engineer from Karnataka, India. He builds intelligent systems, IoT solutions and production-grade web applications, and is available for freelance projects and full-time roles.
+
+The site is a single page with sections for About, Services, Skills, Projects, Education and Contact. Project details, skills and contact information are rendered from the same content shown below.
+
+## Profile
+
+- [Portfolio home](https://portfolio.jeevangowda.xyz/): Introduction, services, skills, projects and education
+- [Resume (PDF)](https://portfolio.jeevangowda.xyz/assets/documents/resume.pdf): Full curriculum vitae
+- [Contact](https://portfolio.jeevangowda.xyz/#contact): Contact form for project inquiries and job opportunities
+
+## Services
+
+- AI & ML Solutions: Custom models, predictive analytics, computer vision and voice/text agents
+- Full-Stack Web Apps: React frontends with clean APIs and realtime backends
+- IoT & Mobile Engineering: Connected device ecosystems with Flutter apps and live telemetry
+- Automation & Scripting: Python automation for data collection, workflows and API integrations
+
+## Social
+
+- [GitHub](https://github.com/jeevan-gowda8): Source code and open-source projects
+- [LinkedIn](https://www.linkedin.com/in/jeevan-gowda8): Professional profile
+- [Email](mailto:jeevangowdajeevan080@gmail.com): Direct contact

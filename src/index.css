@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
-
 :root {
   /* Warm Architectural Luxury Palette from DESIGN.md */
   --surface: #fcf9f2;
@@ -37,12 +35,14 @@
   /* Architectural Identity Tokens */
   --accent-gold: #C5A059;
   --accent-gold-light: #D4AF37;
+  /* Gold for small text — meets WCAG AA contrast (4.5:1) on ivory */
+  --gold-text: #7f6124;
   --gold-border: #E8DEC8;
   --ivory-canvas: #FBF8F1;
   --ivory-surface: #F4EFE6;
   --charcoal-primary: #181613;
   --charcoal-muted: #544F46;
-  --charcoal-subtle: #766F64;
+  --charcoal-subtle: #6b645a;
 
   /* Typography Font Families */
   --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -65,6 +65,7 @@
   --shadow-soft: 0 1px 2px rgba(24, 22, 19, 0.04), 0 12px 32px -12px rgba(24, 22, 19, 0.10);
   --shadow-lift: 0 2px 4px rgba(24, 22, 19, 0.04), 0 24px 48px -16px rgba(120, 90, 26, 0.22);
   --gold-gradient: linear-gradient(110deg, #9c7a35 0%, #c5a059 30%, #ecd497 50%, #c5a059 70%, #9c7a35 100%);
+  --gold-gradient-text: linear-gradient(110deg, #6f5420 0%, #8a6a2b 45%, #a8843f 70%, #7f6124 100%);
 }
 
 *, *::before, *::after {
@@ -249,7 +250,7 @@ h1, h2, h3, h4, h5, h6, .font-display {
 /* Index Number Badge [ 01 ] */
 .index-num {
   font-family: var(--font-mono);
-  color: var(--accent-gold);
+  color: var(--gold-text);
   font-size: 0.85rem;
   letter-spacing: 0.06em;
 }
@@ -262,7 +263,7 @@ h1, h2, h3, h4, h5, h6, .font-display {
   padding: 0.35rem 0.95rem;
   background-color: var(--ivory-surface);
   border: 1px solid var(--gold-border);
-  color: var(--accent-gold);
+  color: var(--gold-text);
   font-family: var(--font-display);
   font-size: 11px;
   font-weight: 600;
@@ -376,7 +377,7 @@ h1, h2, h3, h4, h5, h6, .font-display {
 }
 
 .btn-tertiary .arrow {
-  color: var(--accent-gold);
+  color: var(--gold-text);
   transition: transform 0.2s ease;
 }
 
@@ -417,8 +418,8 @@ h1, h2, h3, h4, h5, h6, .font-display {
 }
 
 .chip-gold {
-  color: var(--accent-gold);
-  border-color: var(--accent-gold);
+  color: var(--gold-text);
+  border-color: var(--gold-text);
 }
 
 /* Form Inputs with curved edges */
@@ -472,17 +473,10 @@ h1, h2, h3, h4, h5, h6, .font-display {
 
 /* Shimmering gold headline text */
 .text-gold-gradient {
-  background: var(--gold-gradient);
-  background-size: 250% 100%;
+  background: var(--gold-gradient-text);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: gold-shimmer 6s ease-in-out infinite;
-}
-
-@keyframes gold-shimmer {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
 }
 
 /* Translucent section band (used for alternating sections) */

@@ -82,7 +82,7 @@ export default function Contact({ data }) {
               }}
             >
               <div>
-                <div className="label-sm" style={{ color: "var(--accent-gold)", marginBottom: "1rem" }}>
+                <div className="label-sm" style={{ color: "var(--gold-text)", marginBottom: "1rem" }}>
                   GET IN TOUCH
                 </div>
                 <h3 className="headline-md" style={{ marginBottom: "1rem" }}>
@@ -138,7 +138,7 @@ export default function Contact({ data }) {
                 }}
               >
                 {data?.personal?.openToWork !== false && <span className="status-bullet" />}
-                <span className="label-sm" style={{ color: "var(--accent-gold)" }}>
+                <span className="label-sm" style={{ color: "var(--gold-text)" }}>
                   {data?.personal?.openToWork !== false
                     ? "CURRENTLY ACCEPTING NEW PROJECTS"
                     : "NOT TAKING NEW PROJECTS RIGHT NOW"}

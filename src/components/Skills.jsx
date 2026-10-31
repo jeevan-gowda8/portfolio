@@ -85,7 +85,7 @@ export default function Skills({ data }) {
                   marginBottom: "2rem"
                 }}
               >
-                <div className="label-sm" style={{ color: "var(--accent-gold)" }}>
+                <div className="label-sm" style={{ color: "var(--gold-text)" }}>
                   CATEGORY : {currentCategory.id?.toUpperCase() || "CORE"}
                 </div>
                 <p className="body-md" style={{ margin: 0, color: "var(--charcoal-muted)" }}>
@@ -140,9 +140,9 @@ export default function Skills({ data }) {
                           marginBottom: "0.85rem"
                         }}
                       >
-                        <h4 className="headline-sm" style={{ margin: 0 }}>
+                        <h3 className="headline-sm" style={{ margin: 0 }}>
                           {skill.name}
-                        </h4>
+                        </h3>
                       </div>
 
                       <p className="body-md" style={{ fontSize: "14px", lineHeight: "22px", margin: 0 }}>

@@ -182,7 +182,7 @@ export default function Projects({ data }) {
                       {project.title}
                     </h3>
                     {project.subtitle && (
-                      <p className="label-sm" style={{ color: "var(--accent-gold)", marginBottom: "1rem" }}>
+                      <p className="label-sm" style={{ color: "var(--gold-text)", marginBottom: "1rem" }}>
                         {project.subtitle}
                       </p>
                     )}
@@ -197,7 +197,7 @@ export default function Projects({ data }) {
                     <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginBottom: "1.5rem" }}>
                       {project.highlights.slice(0, 3).map((h, i) => (
                         <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "0.6rem" }}>
-                          <span style={{ color: "var(--accent-gold)", fontWeight: 700 }}>—</span>
+                          <span style={{ color: "var(--gold-text)", fontWeight: 700 }}>—</span>
                           <span className="body-md" style={{ fontSize: "14px", color: "var(--charcoal-primary)" }}>
                             {h}
                           </span>
@@ -278,7 +278,7 @@ export default function Projects({ data }) {
                         borderBottom: "1px solid var(--gold-border)"
                       }}
                     >
-                      <span className="label-sm" style={{ color: "var(--accent-gold)" }}>
+                      <span className="label-sm" style={{ color: "var(--gold-text)" }}>
                         TECH STACK
                       </span>
                       <span
@@ -286,7 +286,7 @@ export default function Projects({ data }) {
                           fontFamily: "var(--font-mono)",
                           fontSize: "1.25rem",
                           fontWeight: 600,
-                          color: "var(--accent-gold)",
+                          color: "var(--gold-text)",
                           opacity: 0.55
                         }}
                       >
@@ -319,7 +319,7 @@ export default function Projects({ data }) {
                     <span className="label-sm" style={{ fontSize: "11px", color: "var(--charcoal-muted)" }}>
                       CATEGORY
                     </span>
-                    <span className="label-sm" style={{ fontSize: "11px", color: "var(--accent-gold)", fontWeight: 600 }}>
+                    <span className="label-sm" style={{ fontSize: "11px", color: "var(--gold-text)", fontWeight: 600 }}>
                       {project.category?.toUpperCase() || "GENERAL"}
                     </span>
                   </div>

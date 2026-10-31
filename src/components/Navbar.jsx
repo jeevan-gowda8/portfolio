@@ -10,28 +10,29 @@ export default function Navbar({ data }) {
   const [activeSection, setActiveSection] = useState("hero");
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-
-      const sections = ["hero", "about", "services", "skills", "projects", "education", "contact"];
-      const scrollPosition = window.scrollY + 180;
-
-      for (const section of sections) {
-        const el = document.getElementById(section);
-        if (el) {
-          const top = el.offsetTop;
-          const height = el.offsetHeight;
-          if (scrollPosition >= top && scrollPosition < top + height) {
-            setActiveSection(section);
-            break;
-          }
-        }
-      }
-    };
-
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+
+    // A section becomes active when it crosses a band just below the header
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
+        });
+      },
+      { rootMargin: "-180px 0px -55% 0px" }
+    );
+    ["hero", "about", "services", "skills", "projects", "education", "contact"].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      observer.disconnect();
+    };
+  }, [data?.settings?.sections]);
 
   const navLinks = [
     { label: "HOME", href: "#hero", id: "hero" },
@@ -91,7 +92,7 @@ export default function Navbar({ data }) {
             </span>
             <span
               className="label-sm"
-              style={{ color: "var(--accent-gold)" }}
+              style={{ color: "var(--gold-text)" }}
             >
               AI & FULL-STACK
             </span>
@@ -226,7 +227,7 @@ export default function Navbar({ data }) {
               >
                 <span>{link.label}</span>
                 {activeSection === link.id && (
-                  <span style={{ color: "var(--accent-gold)", fontWeight: 700 }}>•</span>
+                  <span style={{ color: "var(--gold-text)", fontWeight: 700 }}>•</span>
                 )}
               </a>
             ))}

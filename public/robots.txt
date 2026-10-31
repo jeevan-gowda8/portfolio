@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin
 
-Sitemap: https://jeevan-portfolio-25922.web.app/sitemap.xml
+Sitemap: https://portfolio.jeevangowda.xyz/sitemap.xml

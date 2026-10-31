@@ -93,9 +93,9 @@ export default function Services({ data }) {
                       transform: "translateZ(30px)"
                     }}
                   >
-                    <Icon style={{ color: "var(--accent-gold)" }} />
+                    <Icon style={{ color: "var(--gold-text)" }} />
                   </div>
-                  <span className="label-sm" style={{ color: "var(--accent-gold)", marginBottom: "0.6rem" }}>
+                  <span className="label-sm" style={{ color: "var(--gold-text)", marginBottom: "0.6rem" }}>
                     {String(idx + 1).padStart(2, "0")}
                   </span>
                   <h3 className="headline-sm" style={{ marginBottom: "0.75rem" }}>
@@ -128,7 +128,7 @@ export default function Services({ data }) {
                     style={{
                       fontFamily: "var(--font-mono)",
                       fontSize: "0.8rem",
-                      color: "var(--accent-gold)",
+                      color: "var(--gold-text)",
                       border: "1px solid var(--accent-gold)",
                       borderRadius: 9999,
                       padding: "0.15rem 0.55rem"

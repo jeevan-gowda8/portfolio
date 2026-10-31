@@ -77,6 +77,8 @@ export default function Background3D() {
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.domElement.style.opacity = "0";
+    renderer.domElement.style.transition = "opacity 1.2s ease";
     container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
@@ -176,7 +178,7 @@ export default function Background3D() {
     // 2. Hero sculpture: liquid-gold morphing orb
     // ─────────────────────────────────────────────────────────────
     const blobUniforms = { uTime: { value: 0 }, uAmp: { value: 0.32 } };
-    const blobGeo = new THREE.IcosahedronGeometry(3.1, isMobile ? 28 : 60);
+    const blobGeo = new THREE.IcosahedronGeometry(3.1, isMobile ? 24 : 44);
     const blobMat = new THREE.MeshPhysicalMaterial({
       color: 0xd8b26a,
       metalness: 1,
@@ -373,6 +375,16 @@ export default function Background3D() {
     let mouseEnergy = 0;
     let scrollTarget = window.scrollY;
     let scrollCurrent = window.scrollY;
+    let disposed = false;
+
+    // Page height is measured only when the layout changes, never inside the frame loop
+    let maxScroll = 1;
+    const measureScroll = () => {
+      maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+    };
+    measureScroll();
+    const pageObserver = new ResizeObserver(measureScroll);
+    pageObserver.observe(document.body);
 
     const handleMouseMove = (e) => {
       const nx = (e.clientX / window.innerWidth) * 2 - 1;
@@ -390,6 +402,7 @@ export default function Background3D() {
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
       bgUniforms.uAspect.value = w / h;
+      measureScroll();
     };
 
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
@@ -412,7 +425,6 @@ export default function Background3D() {
       mouseEnergy *= 0.95;
       scrollCurrent += (scrollTarget - scrollCurrent) * 0.08;
 
-      const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
       const progress = THREE.MathUtils.clamp(scrollCurrent / maxScroll, 0, 1);
       const scrollUnits = scrollCurrent / window.innerHeight; // viewports scrolled
 
@@ -471,19 +483,35 @@ export default function Background3D() {
       renderFrame();
       frameId = requestAnimationFrame(loop);
     };
+    let ready = false;
     const handleVisibility = () => {
       if (document.hidden) {
         if (frameId !== null) cancelAnimationFrame(frameId);
         frameId = null;
-      } else if (frameId === null) {
+      } else if (frameId === null && ready) {
         clock.getDelta();
         loop();
       }
     };
     document.addEventListener("visibilitychange", handleVisibility);
-    loop();
+
+    // Compile shaders off the main thread where supported, then fade the scene in
+    renderer
+      .compileAsync(scene, camera)
+      .catch(() => {})
+      .finally(() => {
+        if (disposed) return;
+        ready = true;
+        clock.getDelta();
+        if (!document.hidden) loop();
+        requestAnimationFrame(() => {
+          renderer.domElement.style.opacity = "1";
+        });
+      });
 
     return () => {
+      disposed = true;
+      pageObserver.disconnect();
       if (frameId !== null) cancelAnimationFrame(frameId);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("scroll", handleScroll);

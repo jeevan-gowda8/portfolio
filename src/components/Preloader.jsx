@@ -21,7 +21,7 @@ export default function Preloader() {
     document.body.style.overflow = "hidden";
 
     const start = performance.now();
-    const duration = 1400;
+    const duration = 650;
     let raf;
     const tick = (now) => {
       const p = Math.min((now - start) / duration, 1);
@@ -92,7 +92,7 @@ export default function Preloader() {
               }}
             />
           </div>
-          <span className="label-sm" style={{ color: "var(--accent-gold)", fontFamily: "var(--font-mono)" }}>
+          <span className="label-sm" style={{ color: "var(--gold-text)", fontFamily: "var(--font-mono)" }}>
             {String(progress).padStart(3, "0")}%
           </span>
         </motion.div>

@@ -72,7 +72,7 @@ export default function Education({ data }) {
                 <h3 className="headline-md" style={{ marginBottom: "0.35rem" }}>
                   {item.degree || item.title}
                 </h3>
-                <div className="label-sm" style={{ color: "var(--accent-gold)", marginBottom: "1.25rem" }}>
+                <div className="label-sm" style={{ color: "var(--gold-text)", marginBottom: "1.25rem" }}>
                   {item.institution} {item.location && `// ${item.location.toUpperCase()}`}
                 </div>
 

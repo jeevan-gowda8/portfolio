@@ -7,7 +7,17 @@ export default defineConfig({
   ],
   build: {
     outDir: 'dist',
-    sourcemap: false,
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        // Long-lived vendor chunks cache separately from app code
+        manualChunks: {
+          react: ['react', 'react-dom', 'react-router-dom'],
+          motion: ['framer-motion'],
+          three: ['three'],
+        },
+      },
+    },
   },
   server: {
     port: 3000,

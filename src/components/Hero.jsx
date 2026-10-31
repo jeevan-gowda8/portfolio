@@ -68,7 +68,7 @@ export default function Hero({ data }) {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="label-md"
               style={{
-                color: "var(--accent-gold)",
+                color: "var(--gold-text)",
                 marginBottom: "1.25rem",
                 display: "inline-flex",
                 alignItems: "center",
@@ -104,7 +104,7 @@ export default function Hero({ data }) {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "0.5rem",
-                color: "var(--accent-gold)",
+                color: "var(--gold-text)",
                 padding: "0.45rem 1rem",
                 backgroundColor: "var(--glass-bg)",
                 backdropFilter: "blur(10px)",
@@ -257,7 +257,7 @@ export default function Hero({ data }) {
                 borderBottom: "1px solid var(--gold-border)"
               }}
             >
-              <span className="label-sm" style={{ color: "var(--accent-gold)" }}>
+              <span className="label-sm" style={{ color: "var(--gold-text)" }}>
                 AT A GLANCE
               </span>
               <span className="label-sm" style={{ color: "var(--charcoal-subtle)" }}>
@@ -266,9 +266,9 @@ export default function Hero({ data }) {
             </div>
 
             <div>
-              <h3 className="headline-sm" style={{ marginBottom: "0.5rem" }}>
+              <h2 className="headline-sm" style={{ marginBottom: "0.5rem" }}>
                 Algorithmic & Hardware Systems
-              </h3>
+              </h2>
               <p className="body-md">
                 Disciplined engineering focusing on deep learning pipelines, voice-driven interfaces, and edge microcontroller telemetry.
               </p>
@@ -333,7 +333,7 @@ export default function Hero({ data }) {
                   >
                     <CountUp value={st.value} />
                   </div>
-                  <div className="label-sm" style={{ color: "var(--accent-gold)", fontSize: "10px" }}>
+                  <div className="label-sm" style={{ color: "var(--gold-text)", fontSize: "10px" }}>
                     {st.label}
                   </div>
                 </div>
@@ -372,7 +372,7 @@ export default function Hero({ data }) {
               style={{
                 fontSize: "10.5px",
                 letterSpacing: "0.15em",
-                color: "var(--accent-gold)",
+                color: "var(--gold-text)",
                 fontWeight: 600
               }}
             >
@@ -413,7 +413,7 @@ export default function Hero({ data }) {
               animate={{ y: [0, 4, 0] }}
               transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
             >
-              <FiChevronDown style={{ color: "var(--accent-gold)", fontSize: "1.1rem" }} />
+              <FiChevronDown style={{ color: "var(--gold-text)", fontSize: "1.1rem" }} />
             </motion.div>
           </a>
         </motion.div>
