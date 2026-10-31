@@ -17,8 +17,20 @@ import { AnimatedDivider } from "./components/ScrollReveal";
 import { portfolioData } from "./data/portfolioData";
 import { fetchLivePortfolio } from "./api";
 import AdminApp from "./admin/AdminApp";
+import { isSectionVisible } from "./siteSettings";
 
 function PortfolioView({ data }) {
+  const show = (id) => isSectionVisible(data, id);
+
+  // Browser tab title and search description, editable in Admin → Settings
+  useEffect(() => {
+    const { siteTitle, metaDescription } = data?.settings || {};
+    if (siteTitle) document.title = siteTitle;
+    if (metaDescription) {
+      document.querySelector('meta[name="description"]')?.setAttribute("content", metaDescription);
+    }
+  }, [data?.settings]);
+
   return (
     <div
       className="portfolio-app"
@@ -37,7 +49,7 @@ function PortfolioView({ data }) {
       <Background3D />
 
       {/* Top Header */}
-      <Navbar />
+      <Navbar data={data} />
 
       {/* Main Structural Flow */}
       <main style={{ position: "relative", zIndex: 1 }}>
@@ -47,15 +59,11 @@ function PortfolioView({ data }) {
         <AnimatedDivider />
         <About data={data} />
         <AnimatedDivider />
-        <Services data={data} />
-        <AnimatedDivider />
-        <Skills data={data} />
-        <AnimatedDivider />
-        <Projects data={data} />
-        <AnimatedDivider />
-        <Education data={data} />
-        <AnimatedDivider />
-        <Contact data={data} />
+        {show("services") && (<><Services data={data} /><AnimatedDivider /></>)}
+        {show("skills") && (<><Skills data={data} /><AnimatedDivider /></>)}
+        {show("projects") && (<><Projects data={data} /><AnimatedDivider /></>)}
+        {show("education") && (<><Education data={data} /><AnimatedDivider /></>)}
+        {show("contact") && <Contact data={data} />}
       </main>
 
       {/* Footer */}

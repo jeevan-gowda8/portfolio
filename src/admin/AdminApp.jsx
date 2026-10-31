@@ -8,9 +8,9 @@ import {
   fetchInboundMessages,
   updateMessageStatus,
   deleteMessage,
-  checkBackendHealth,
-  API_BASE
+  checkBackendHealth
 } from "../api";
+import { TOGGLEABLE_SECTIONS } from "../siteSettings";
 import {
   FaTachometerAlt,
   FaUserTie,
@@ -212,6 +212,41 @@ export default function AdminApp() {
       updated[catIdx] = { ...updated[catIdx], items };
       return { ...prev, skills: updated };
     });
+  };
+
+  // Settings helpers
+  const updatePersonal = (field, value) => setPortfolio(p => ({
+    ...p,
+    personal: { ...p.personal, [field]: value }
+  }));
+
+  const updateSocial = (key, value) => setPortfolio(p => ({
+    ...p,
+    personal: { ...p.personal, socials: { ...(p.personal?.socials || {}), [key]: value } }
+  }));
+
+  const updateSettings = (field, value) => setPortfolio(p => ({
+    ...p,
+    settings: { ...(p.settings || {}), [field]: value }
+  }));
+
+  const updateSectionVisibility = (id, visible) => setPortfolio(p => ({
+    ...p,
+    settings: {
+      ...(p.settings || {}),
+      sections: { ...(p.settings?.sections || {}), [id]: visible }
+    }
+  }));
+
+  const handleDownloadBackup = () => {
+    const blob = new Blob([JSON.stringify(portfolio, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `portfolio-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("Backup downloaded");
   };
 
   // Projects Mutation Handlers
@@ -485,7 +520,7 @@ export default function AdminApp() {
             className={`admin-nav-item ${activeTab === 'settings' ? 'active' : ''}`}
             onClick={() => setActiveTab('settings')}
           >
-            <FaCog /> System & DB
+            <FaCog /> Settings
           </button>
         </aside>
 
@@ -1117,63 +1152,132 @@ export default function AdminApp() {
             </div>
           )}
 
-          {/* TAB 7: SYSTEM & DATABASE SETTINGS */}
+          {/* TAB 7: SETTINGS */}
           {activeTab === 'settings' && (
             <div>
               <div className="admin-section-header">
-                <h2 className="admin-section-title">System & Database Architecture</h2>
+                <h2 className="admin-section-title">Settings</h2>
                 <p className="admin-section-desc">
-                  Supabase database connection status and server diagnostics.
+                  Availability, social profiles, visible sections and search appearance. Click <strong>Save &amp; Publish</strong> to apply.
                 </p>
               </div>
 
+              {/* Availability */}
               <div className="admin-card">
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
-                  <h3 style={{ fontSize: "1.05rem", fontWeight: 700, margin: 0 }}>
-                    Backend & Database Status
-                  </h3>
-                  <button
-                    className="btn-secondary"
-                    style={{ fontSize: "0.8rem", padding: "6px 12px" }}
-                    onClick={async () => {
-                      showToast("Pinging backend server...", "info");
-                      const h = await checkBackendHealth();
-                      setHealth(h);
-                      showToast(`Backend status: ${h.status}`);
-                    }}
-                  >
-                    Test Connection
+                <h3 className="admin-settings-title">Availability</h3>
+                <label className="admin-toggle-row">
+                  <span>
+                    <strong>Open to work</strong>
+                    <small>Shows the green "available" badge on the home, about and contact sections.</small>
+                  </span>
+                  <input
+                    type="checkbox"
+                    className="admin-switch"
+                    checked={portfolio.personal?.openToWork !== false}
+                    onChange={(e) => updatePersonal("openToWork", e.target.checked)}
+                  />
+                </label>
+                <div className="admin-form-group" style={{ marginTop: "16px", marginBottom: 0 }}>
+                  <label className="admin-label">Availability Message</label>
+                  <input
+                    type="text"
+                    className="admin-input"
+                    placeholder="Available for Projects & Full-time Roles"
+                    value={portfolio.personal?.availability || ""}
+                    onChange={(e) => updatePersonal("availability", e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {/* Social profiles */}
+              <div className="admin-card">
+                <h3 className="admin-settings-title">Social Profiles</h3>
+                <div className="admin-grid-2">
+                  {[
+                    ["github", "GitHub", "https://github.com/jeevan-gowda8"],
+                    ["linkedin", "LinkedIn", "https://www.linkedin.com/in/your-profile"],
+                    ["instagram", "Instagram", "https://www.instagram.com/your-handle"],
+                    ["email", "Email Link", "mailto:you@example.com"]
+                  ].map(([key, label, placeholder]) => (
+                    <div className="admin-form-group" key={key}>
+                      <label className="admin-label">{label}</label>
+                      <input
+                        type="text"
+                        className="admin-input"
+                        placeholder={placeholder}
+                        value={portfolio.personal?.socials?.[key] || ""}
+                        onChange={(e) => updateSocial(key, e.target.value)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Section visibility */}
+              <div className="admin-card">
+                <h3 className="admin-settings-title">Visible Sections</h3>
+                <p className="admin-settings-hint">Hidden sections disappear from the page, navigation and footer.</p>
+                <div className="admin-toggle-grid">
+                  {TOGGLEABLE_SECTIONS.map((section) => (
+                    <label className="admin-toggle-row" key={section.id}>
+                      <span><strong>{section.label}</strong></span>
+                      <input
+                        type="checkbox"
+                        className="admin-switch"
+                        checked={portfolio.settings?.sections?.[section.id] !== false}
+                        onChange={(e) => updateSectionVisibility(section.id, e.target.checked)}
+                      />
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* SEO */}
+              <div className="admin-card">
+                <h3 className="admin-settings-title">Search &amp; Sharing</h3>
+                <div className="admin-form-group">
+                  <label className="admin-label">Browser Tab Title</label>
+                  <input
+                    type="text"
+                    className="admin-input"
+                    placeholder="Jeevan Gowda A V — AI & Full-Stack Developer"
+                    value={portfolio.settings?.siteTitle || ""}
+                    onChange={(e) => updateSettings("siteTitle", e.target.value)}
+                  />
+                </div>
+                <div className="admin-form-group" style={{ marginBottom: 0 }}>
+                  <label className="admin-label">Search Description</label>
+                  <textarea
+                    rows={2}
+                    className="admin-textarea"
+                    placeholder="Portfolio of Jeevan Gowda A V — Building intelligent systems with AI, Machine Learning & IoT"
+                    value={portfolio.settings?.metaDescription || ""}
+                    onChange={(e) => updateSettings("metaDescription", e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {/* Backup & account */}
+              <div className="admin-card">
+                <h3 className="admin-settings-title">Backup &amp; Account</h3>
+                <div className="admin-toggle-row">
+                  <span>
+                    <strong>Download backup</strong>
+                    <small>Saves all portfolio content as a JSON file.</small>
+                  </span>
+                  <button className="btn-secondary" onClick={handleDownloadBackup}>
+                    Download
                   </button>
                 </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: "10px", fontFamily: "'JetBrains Mono', monospace", fontSize: "0.88rem" }}>
-                  <div><strong>API Endpoint:</strong> <code style={{ background: "var(--admin-canvas)", padding: "2px 8px", borderRadius: "4px", border: "1px solid var(--admin-border)" }}>{API_BASE}</code></div>
-                  <div><strong>API Health:</strong> <span style={{ color: health.status === 'ok' ? "var(--admin-success)" : "var(--admin-danger)" }}>{health.status}</span></div>
-                  <div><strong>Database Engine:</strong> {health.database}</div>
-                  <div><strong>Supabase Active:</strong> {health.supabaseConfigured ? "Yes (Cloud PostgreSQL)" : "No (Local In-Memory Mode)"}</div>
-                  <div><strong>Service:</strong> {health.service || "JG Portfolio Backend"}</div>
+                <div className="admin-toggle-row">
+                  <span>
+                    <strong>Signed in as</strong>
+                    <small>{user?.email || "Administrator"}</small>
+                  </span>
+                  <button className="btn-danger" onClick={handleLogout}>
+                    <FaSignOutAlt /> Sign Out
+                  </button>
                 </div>
-              </div>
-
-              <div className="admin-card">
-                <h3 style={{ fontSize: "1.05rem", fontWeight: 700, marginBottom: "10px" }}>
-                  Render & Supabase Deployment Guide
-                </h3>
-                <p style={{ fontSize: "0.88rem", lineHeight: 1.6, color: "var(--admin-text-subtle)", marginBottom: "14px" }}>
-                  <strong>Render Backend Deployment:</strong>
-                  <br />
-                  1. Deploy the <code>backend/</code> folder to Render as a <strong>Web Service</strong>.
-                  <br />
-                  2. Add environment variables on Render: <code>SUPABASE_URL</code>, <code>SUPABASE_KEY</code>, <code>ADMIN_EMAIL</code>, <code>ADMIN_PASSWORD</code>.
-                  <br />
-                  3. In the frontend <code>.env</code> file (or frontend hosting dashboard), set:
-                  <br />
-                  <code style={{ background: "var(--admin-canvas)", padding: "4px 8px", borderRadius: "6px", display: "inline-block", marginTop: "4px" }}>
-                    VITE_API_URL=https://your-service.onrender.com
-                  </code>
-                  <br /><br />
-                  <em>Note: On Render's free tier, the web service automatically spins down after 15 minutes of inactivity. The frontend automatically sends a background wake-up ping on load to start the server.</em>
-                </p>
               </div>
             </div>
           )}

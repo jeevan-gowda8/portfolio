@@ -143,8 +143,14 @@ export default function About({ data }) {
                     STATUS
                   </span>
                   <span className="label-md" style={{ color: "var(--accent-gold)", display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span className="status-bullet" />
-                    OPEN TO WORK
+                    {data?.personal?.openToWork !== false ? (
+                      <>
+                        <span className="status-bullet" />
+                        OPEN TO WORK
+                      </>
+                    ) : (
+                      "NOT AVAILABLE"
+                    )}
                   </span>
                 </div>
               </div>

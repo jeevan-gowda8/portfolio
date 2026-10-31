@@ -1,6 +1,7 @@
 import React from "react";
 import { FiArrowUp, FiGithub, FiLinkedin, FiInstagram, FiMail } from "react-icons/fi";
 import Logo from "./Logo";
+import { isSectionVisible } from "../siteSettings";
 import { ScrollReveal } from "./ScrollReveal";
 
 export default function Footer({ data }) {
@@ -50,27 +51,21 @@ export default function Footer({ data }) {
                 NAVIGATION
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                <a href="#hero" className="label-sm" style={{ color: "var(--charcoal-muted)", textDecoration: "none" }}>
-                  HOME
-                </a>
-                <a href="#about" className="label-sm" style={{ color: "var(--charcoal-muted)", textDecoration: "none" }}>
-                  ABOUT
-                </a>
-                <a href="#services" className="label-sm" style={{ color: "var(--charcoal-muted)", textDecoration: "none" }}>
-                  SERVICES
-                </a>
-                <a href="#skills" className="label-sm" style={{ color: "var(--charcoal-muted)", textDecoration: "none" }}>
-                  SKILLS
-                </a>
-                <a href="#projects" className="label-sm" style={{ color: "var(--charcoal-muted)", textDecoration: "none" }}>
-                  PROJECTS
-                </a>
-                <a href="#education" className="label-sm" style={{ color: "var(--charcoal-muted)", textDecoration: "none" }}>
-                  EDUCATION
-                </a>
-                <a href="#contact" className="label-sm" style={{ color: "var(--charcoal-muted)", textDecoration: "none" }}>
-                  CONTACT
-                </a>
+                {[
+                  ["hero", "HOME"],
+                  ["about", "ABOUT"],
+                  ["services", "SERVICES"],
+                  ["skills", "SKILLS"],
+                  ["projects", "PROJECTS"],
+                  ["education", "EDUCATION"],
+                  ["contact", "CONTACT"]
+                ]
+                  .filter(([id]) => isSectionVisible(data, id))
+                  .map(([id, label]) => (
+                    <a key={id} href={`#${id}`} className="label-sm" style={{ color: "var(--charcoal-muted)", textDecoration: "none" }}>
+                      {label}
+                    </a>
+                  ))}
               </div>
             </div>
 

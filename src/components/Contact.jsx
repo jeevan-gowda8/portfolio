@@ -137,9 +137,11 @@ export default function Contact({ data }) {
                   gap: "0.75rem"
                 }}
               >
-                <span className="status-bullet" />
+                {data?.personal?.openToWork !== false && <span className="status-bullet" />}
                 <span className="label-sm" style={{ color: "var(--accent-gold)" }}>
-                  CURRENTLY ACCEPTING NEW PROJECTS
+                  {data?.personal?.openToWork !== false
+                    ? "CURRENTLY ACCEPTING NEW PROJECTS"
+                    : "NOT TAKING NEW PROJECTS RIGHT NOW"}
                 </span>
               </div>
             </div>

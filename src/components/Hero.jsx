@@ -61,6 +61,7 @@ export default function Hero({ data }) {
         >
           {/* Main Title & Narrative with Staggered Motion */}
           <div>
+            {data?.personal?.openToWork !== false && (
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -77,6 +78,7 @@ export default function Hero({ data }) {
               <span className="status-bullet" />
               <span>{data?.personal?.availability || "Available for Projects & Full-time Roles"}</span>
             </motion.div>
+            )}
 
             <motion.h1
               initial={{ opacity: 0, y: 25 }}

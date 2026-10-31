@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
 import { motion, AnimatePresence } from "framer-motion";
 import Logo from "./Logo";
+import { isSectionVisible } from "../siteSettings";
 
-export default function Navbar() {
+export default function Navbar({ data }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
@@ -40,7 +41,7 @@ export default function Navbar() {
     { label: "PROJECTS", href: "#projects", id: "projects" },
     { label: "EDUCATION", href: "#education", id: "education" },
     { label: "CONTACT", href: "#contact", id: "contact" }
-  ];
+  ].filter((link) => isSectionVisible(data, link.id));
 
   return (
     <header
