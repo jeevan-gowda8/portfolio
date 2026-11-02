@@ -11,11 +11,9 @@ export default function ScrollProgress() {
   });
 
   const [visible, setVisible] = useState(false);
-  const [scrollPercent, setScrollPercent] = useState(0);
 
   useEffect(() => {
     const unsubscribe = scrollYProgress.on("change", (latest) => {
-      setScrollPercent(Math.round(latest * 100));
       setVisible(latest > 0.08);
     });
     return () => unsubscribe();
@@ -28,10 +26,7 @@ export default function ScrollProgress() {
     });
   };
 
-  // SVG circle circumference for r = 18 is 2 * PI * 18 ≈ 113.1
   const radius = 18;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (scrollPercent / 100) * circumference;
 
   return (
     <>
@@ -77,7 +72,7 @@ export default function ScrollProgress() {
             <button
               onClick={scrollToTop}
               aria-label="Scroll to top of page"
-              title={`Scroll to top (${scrollPercent}%)`}
+              title="Scroll to top"
               className="scroll-top-btn"
               style={{
                 position: "relative",
@@ -117,19 +112,15 @@ export default function ScrollProgress() {
                   fill="transparent"
                   opacity="0.4"
                 />
-                <circle
+                <motion.circle
                   cx="24"
                   cy="24"
                   r={radius}
                   stroke="var(--accent-gold)"
                   strokeWidth="2.5"
                   fill="transparent"
-                  strokeDasharray={circumference}
-                  strokeDashoffset={strokeDashoffset}
                   strokeLinecap="round"
-                  style={{
-                    transition: "stroke-dashoffset 0.15s ease-out"
-                  }}
+                  style={{ pathLength: scrollYProgress }}
                 />
               </svg>
 

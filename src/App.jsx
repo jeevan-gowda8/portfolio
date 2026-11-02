@@ -19,6 +19,7 @@ import { fetchLivePortfolio } from "./api";
 const Background3D = lazy(() => import("./components/Background3D"));
 const AdminApp = lazy(() => import("./admin/AdminApp"));
 import { isSectionVisible } from "./siteSettings";
+import { getGraphicsTier } from "./deviceProfile";
 
 // Start loading the 3D scene once the page has painted and the browser is idle
 function useIdleMount(timeout = 2500) {
@@ -38,6 +39,7 @@ function useIdleMount(timeout = 2500) {
 function PortfolioView({ data }) {
   const show = (id) => isSectionVisible(data, id);
   const load3D = useIdleMount();
+  const graphicsTier = getGraphicsTier();
 
   // Browser tab title and search description, editable in Admin → Settings
   useEffect(() => {
@@ -63,7 +65,8 @@ function PortfolioView({ data }) {
       <ScrollProgress />
 
       {/* Interactive 3D Background Animation with Scroll Parallax */}
-      {load3D && (
+      {graphicsTier !== "full" && <div className="static-aurora" aria-hidden="true" />}
+      {load3D && graphicsTier !== "none" && (
         <Suspense fallback={null}>
           <Background3D />
         </Suspense>

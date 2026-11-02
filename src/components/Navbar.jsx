@@ -70,6 +70,7 @@ export default function Navbar({ data }) {
         {/* Brand Index */}
         <a
           href="#hero"
+          className="nav-brand"
           style={{
             display: "flex",
             alignItems: "center",
@@ -80,7 +81,9 @@ export default function Navbar({ data }) {
           <Logo size={42} />
           <div style={{ display: "flex", flexDirection: "column" }}>
             <span
+              className="nav-name"
               style={{
+                whiteSpace: "nowrap",
                 fontFamily: "var(--font-display)",
                 fontWeight: 700,
                 fontSize: "1.05rem",
@@ -147,7 +150,7 @@ export default function Navbar({ data }) {
         </nav>
 
         {/* Actions */}
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        <div className="nav-actions" style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
           <a
             href="/assets/documents/resume.pdf"
             target="_blank"
@@ -161,8 +164,8 @@ export default function Navbar({ data }) {
 
           <a
             href="#contact"
-            className="btn btn-primary"
-            style={{ padding: "0.6rem 1.4rem" }}
+            className="btn btn-primary nav-hire"
+            style={{ padding: "0.6rem 1.4rem", whiteSpace: "nowrap" }}
           >
             Hire Me
           </a>
@@ -249,6 +252,15 @@ export default function Navbar({ data }) {
           .desktop-nav { display: flex !important; }
           #navResume { display: inline-flex !important; }
           .mobile-toggle { display: none !important; }
+        }
+        @media (max-width: 480px) {
+          .nav-brand { gap: 0.6rem !important; }
+          .nav-name { font-size: 0.92rem !important; }
+          .nav-actions { gap: 0.5rem !important; }
+          .nav-hire { padding: 0.5rem 0.9rem !important; font-size: 12px; }
+        }
+        @media (max-width: 359px) {
+          .nav-hire { display: none; }
         }
       `}</style>
     </header>

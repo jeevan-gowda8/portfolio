@@ -1,30 +1,41 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FiArrowRight, FiDownload, FiGithub, FiLinkedin, FiInstagram, FiMail, FiChevronDown } from "react-icons/fi";
 import { motion } from "framer-motion";
 import TiltCard from "./TiltCard";
 import CountUp from "./CountUp";
 
-export default function Hero({ data }) {
-  const roles = [
-    "FULL-STACK DEVELOPER",
-    "AI & MACHINE LEARNING ENGINEER",
-    "IOT SYSTEMS ARCHITECT",
-    "COMPUTATIONAL SYSTEM RESEARCHER"
-  ];
+const ROLES = [
+  "FULL-STACK DEVELOPER",
+  "AI & MACHINE LEARNING ENGINEER",
+  "IOT SYSTEMS ARCHITECT",
+  "COMPUTATIONAL SYSTEM RESEARCHER"
+];
+
+// Kept separate so each typed letter re-renders only this text, not the whole hero
+function TypewriterRole() {
+  const cursorRef = useRef(null);
+  const [onScreen, setOnScreen] = useState(true);
   const [roleIndex, setRoleIndex] = useState(0);
   const [displayText, setDisplayText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [typingSpeed, setTypingSpeed] = useState(90);
 
   useEffect(() => {
-    const currentRole = roles[roleIndex];
+    const observer = new IntersectionObserver(([entry]) => setOnScreen(entry.isIntersecting));
+    observer.observe(cursorRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!onScreen) return;
+    const currentRole = ROLES[roleIndex];
     let timer;
 
     if (!isDeleting && displayText === currentRole) {
       timer = setTimeout(() => setIsDeleting(true), 2400);
     } else if (isDeleting && displayText === "") {
       setIsDeleting(false);
-      setRoleIndex((prev) => (prev + 1) % roles.length);
+      setRoleIndex((prev) => (prev + 1) % ROLES.length);
       setTypingSpeed(90);
     } else {
       timer = setTimeout(() => {
@@ -38,8 +49,28 @@ export default function Hero({ data }) {
     }
 
     return () => clearTimeout(timer);
-  }, [displayText, isDeleting, roleIndex, typingSpeed]);
+  }, [displayText, isDeleting, roleIndex, typingSpeed, onScreen]);
 
+  return (
+    <>
+      <span style={{ color: "var(--charcoal-primary)", fontWeight: 600 }}>
+        {displayText}
+      </span>
+      <span
+        ref={cursorRef}
+        style={{
+          width: "2px",
+          height: "12px",
+          backgroundColor: "var(--accent-gold)",
+          display: "inline-block",
+          animation: "blink 1s infinite"
+        }}
+      />
+    </>
+  );
+}
+
+export default function Hero({ data }) {
   const stats = data?.personal?.stats || [
     { label: "Engineering Practice", value: "03+" },
     { label: "Systems Deployed", value: "12+" },
@@ -115,18 +146,7 @@ export default function Hero({ data }) {
               }}
             >
               <span>ROLE :</span>
-              <span style={{ color: "var(--charcoal-primary)", fontWeight: 600 }}>
-                {displayText}
-              </span>
-              <span
-                style={{
-                  width: "2px",
-                  height: "12px",
-                  backgroundColor: "var(--accent-gold)",
-                  display: "inline-block",
-                  animation: "blink 1s infinite"
-                }}
-              />
+              <TypewriterRole />
             </motion.div>
 
             <motion.p
@@ -391,16 +411,8 @@ export default function Hero({ data }) {
                 boxShadow: "0 4px 12px rgba(24, 22, 19, 0.03)"
               }}
             >
-              <motion.div
-                animate={{
-                  y: [0, 12, 0],
-                  opacity: [1, 0.2, 1]
-                }}
-                transition={{
-                  duration: 1.8,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
+              <div
+                className="hero-scroll-dot"
                 style={{
                   width: "3px",
                   height: "7px",
@@ -409,12 +421,9 @@ export default function Hero({ data }) {
                 }}
               />
             </div>
-            <motion.div
-              animate={{ y: [0, 4, 0] }}
-              transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-            >
+            <div className="hero-scroll-chevron">
               <FiChevronDown style={{ color: "var(--gold-text)", fontSize: "1.1rem" }} />
-            </motion.div>
+            </div>
           </a>
         </motion.div>
       </div>

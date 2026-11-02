@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
+import { getGraphicsTier } from "../deviceProfile";
 
 // ─────────────────────────────────────────────────────────────
 // Shared GLSL: 3D simplex noise (Ashima Arts / Stefan Gustavson)
@@ -62,18 +63,28 @@ export default function Background3D() {
     if (!container) return;
 
     const isMobile = window.innerWidth < 768;
+    // Phones and tablets get cheaper materials, fewer objects and a lower frame rate
+    const lite = getGraphicsTier() === "lite";
+    // The canvas is taller than the screen on touch devices so it still covers
+    // the page when the address bar collapses, without being resized mid-scroll
+    const viewHeight = () => window.innerHeight + (lite ? 120 : 0);
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     // ─────────────────────────────────────────────────────────────
     // Renderer, Scene, Camera
     // ─────────────────────────────────────────────────────────────
-    const renderer = new THREE.WebGLRenderer({
-      antialias: !isMobile,
-      alpha: true,
-      powerPreference: "high-performance"
-    });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 1.75));
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        antialias: !lite,
+        alpha: true,
+        powerPreference: lite ? "default" : "high-performance"
+      });
+    } catch {
+      return; // WebGL unavailable: the page simply has no 3D background
+    }
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, lite ? 1.25 : 1.75));
+    renderer.setSize(window.innerWidth, viewHeight());
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -82,7 +93,7 @@ export default function Background3D() {
     container.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 200);
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / viewHeight(), 0.1, 200);
     camera.position.set(0, 0, 22);
 
     // Studio environment map gives metals and glass real reflections
@@ -97,7 +108,7 @@ export default function Background3D() {
     scene.add(keyLight);
     const rimLight = new THREE.PointLight(0xf5c77e, 40, 40, 2);
     rimLight.position.set(-8, -4, 6);
-    scene.add(rimLight);
+    if (!lite) scene.add(rimLight);
 
     // ─────────────────────────────────────────────────────────────
     // 1. Animated aurora backdrop (fullscreen shader drawn first, so the
@@ -172,23 +183,26 @@ export default function Background3D() {
     const bgQuad = new THREE.Mesh(bgQuadGeo, bgMaterial);
     bgQuad.frustumCulled = false;
     bgQuad.renderOrder = -1;
-    scene.add(bgQuad);
+    // On lite devices a static CSS gradient (.static-aurora) replaces this shader
+    if (!lite) scene.add(bgQuad);
 
     // ─────────────────────────────────────────────────────────────
     // 2. Hero sculpture: liquid-gold morphing orb
     // ─────────────────────────────────────────────────────────────
     const blobUniforms = { uTime: { value: 0 }, uAmp: { value: 0.32 } };
-    const blobGeo = new THREE.IcosahedronGeometry(3.1, isMobile ? 24 : 44);
-    const blobMat = new THREE.MeshPhysicalMaterial({
-      color: 0xd8b26a,
-      metalness: 1,
-      roughness: 0.16,
-      clearcoat: 1,
-      clearcoatRoughness: 0.08,
-      iridescence: 0.35,
-      iridescenceIOR: 1.4,
-      envMapIntensity: 1.25
-    });
+    const blobGeo = new THREE.IcosahedronGeometry(3.1, lite ? 10 : 44);
+    const blobMat = lite
+      ? new THREE.MeshStandardMaterial({ color: 0xd8b26a, metalness: 1, roughness: 0.2, envMapIntensity: 1.25 })
+      : new THREE.MeshPhysicalMaterial({
+          color: 0xd8b26a,
+          metalness: 1,
+          roughness: 0.16,
+          clearcoat: 1,
+          clearcoatRoughness: 0.08,
+          iridescence: 0.35,
+          iridescenceIOR: 1.4,
+          envMapIntensity: 1.25
+        });
     blobMat.onBeforeCompile = (shader) => {
       shader.uniforms.uTime = blobUniforms.uTime;
       shader.uniforms.uAmp = blobUniforms.uAmp;
@@ -201,8 +215,8 @@ export default function Background3D() {
           ${NOISE_GLSL}
           vec3 displace(vec3 p) {
             vec3 n = normalize(p);
-            float d = snoise(n * 1.3 + vec3(uTime * 0.22)) * 0.75
-                    + snoise(n * 3.1 - vec3(uTime * 0.17)) * 0.25;
+            float d = snoise(n * 1.3 + vec3(uTime * 0.22)) * ${lite ? "1.0" : `0.75
+                    + snoise(n * 3.1 - vec3(uTime * 0.17)) * 0.25`};
             return n * (length(p) + d * uAmp * 2.2);
           }`
         )
@@ -227,14 +241,14 @@ export default function Background3D() {
     // Delicate orbit rings circling the orb
     const ringGroup = new THREE.Group();
     const ringMat = new THREE.MeshStandardMaterial({ color: 0xc5a059, metalness: 1, roughness: 0.25 });
-    const ringGeos = [4.6, 5.4, 6.3].map((r) => new THREE.TorusGeometry(r, 0.025, 8, 160));
+    const ringGeos = [4.6, 5.4, 6.3].map((r) => new THREE.TorusGeometry(r, 0.025, lite ? 5 : 8, lite ? 72 : 160));
     ringGeos.forEach((g, i) => {
       const ring = new THREE.Mesh(g, ringMat);
       ring.rotation.set(Math.PI / 2 + (i - 1) * 0.45, i * 0.6, 0);
       ringGroup.add(ring);
     });
     // Tiny satellite spheres riding the rings
-    const satGeo = new THREE.SphereGeometry(0.14, 16, 16);
+    const satGeo = new THREE.SphereGeometry(0.14, lite ? 8 : 16, lite ? 8 : 16);
     const satellites = ringGroup.children.map((ring, i) => {
       const sat = new THREE.Mesh(satGeo, ringMat);
       ring.add(sat);
@@ -245,37 +259,42 @@ export default function Background3D() {
     // ─────────────────────────────────────────────────────────────
     // 3. Floating glass & gold objects arranged in depth
     // ─────────────────────────────────────────────────────────────
-    const glassMat = new THREE.MeshPhysicalMaterial({
-      color: 0xffffff,
-      metalness: 0,
-      roughness: 0.04,
-      transmission: 1,
-      thickness: 1.4,
-      ior: 1.45,
-      iridescence: 0.6,
-      iridescenceIOR: 1.3,
-      envMapIntensity: 1.4,
-      transparent: true
-    });
-    const goldMat = new THREE.MeshPhysicalMaterial({
-      color: 0xc9a35a,
-      metalness: 1,
-      roughness: 0.22,
-      clearcoat: 0.6
-    });
-    const charcoalMat = new THREE.MeshPhysicalMaterial({
-      color: 0x2a2620,
-      metalness: 0.6,
-      roughness: 0.3,
-      clearcoat: 1
-    });
+    // Real glass makes the GPU draw the whole scene an extra time, so lite
+    // devices get a simple translucent material instead
+    const glassMat = lite
+      ? new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          metalness: 0.1,
+          roughness: 0.1,
+          envMapIntensity: 1.4,
+          transparent: true,
+          opacity: 0.4
+        })
+      : new THREE.MeshPhysicalMaterial({
+          color: 0xffffff,
+          metalness: 0,
+          roughness: 0.04,
+          transmission: 1,
+          thickness: 1.4,
+          ior: 1.45,
+          iridescence: 0.6,
+          iridescenceIOR: 1.3,
+          envMapIntensity: 1.4,
+          transparent: true
+        });
+    const goldMat = lite
+      ? new THREE.MeshStandardMaterial({ color: 0xc9a35a, metalness: 1, roughness: 0.22 })
+      : new THREE.MeshPhysicalMaterial({ color: 0xc9a35a, metalness: 1, roughness: 0.22, clearcoat: 0.6 });
+    const charcoalMat = lite
+      ? new THREE.MeshStandardMaterial({ color: 0x2a2620, metalness: 0.6, roughness: 0.3 })
+      : new THREE.MeshPhysicalMaterial({ color: 0x2a2620, metalness: 0.6, roughness: 0.3, clearcoat: 1 });
 
     const shapeGeos = {
-      sphere: new THREE.SphereGeometry(1, 48, 48),
-      torus: new THREE.TorusGeometry(0.9, 0.32, 32, 96),
-      capsule: new THREE.CapsuleGeometry(0.45, 1.1, 12, 24),
+      sphere: lite ? new THREE.SphereGeometry(1, 20, 20) : new THREE.SphereGeometry(1, 48, 48),
+      torus: lite ? new THREE.TorusGeometry(0.9, 0.32, 12, 36) : new THREE.TorusGeometry(0.9, 0.32, 32, 96),
+      capsule: lite ? new THREE.CapsuleGeometry(0.45, 1.1, 6, 12) : new THREE.CapsuleGeometry(0.45, 1.1, 12, 24),
       octa: new THREE.OctahedronGeometry(1, 0),
-      knot: new THREE.TorusKnotGeometry(0.7, 0.22, 140, 20)
+      knot: lite ? new THREE.TorusKnotGeometry(0.7, 0.22, 56, 8) : new THREE.TorusKnotGeometry(0.7, 0.22, 140, 20)
     };
 
     const floaterDefs = [
@@ -294,7 +313,7 @@ export default function Background3D() {
       { geo: "sphere", mat: glassMat, pos: [-12, -36, -3], s: 1.6 },
       { geo: "torus", mat: charcoalMat, pos: [4, -42, -9], s: 1.0 }
     ];
-    const activeDefs = isMobile ? floaterDefs.filter((_, i) => i % 2 === 0) : floaterDefs;
+    const activeDefs = lite ? floaterDefs.filter((_, i) => i % 3 === 0) : floaterDefs;
 
     const floaters = activeDefs.map((def, i) => {
       const mesh = new THREE.Mesh(shapeGeos[def.geo], def.mat);
@@ -316,7 +335,7 @@ export default function Background3D() {
     // ─────────────────────────────────────────────────────────────
     // 4. Twinkling gold dust
     // ─────────────────────────────────────────────────────────────
-    const dustCount = isMobile ? 700 : 1800;
+    const dustCount = lite ? 150 : 1800;
     const dustGeo = new THREE.BufferGeometry();
     const dustPos = new Float32Array(dustCount * 3);
     const dustSeed = new Float32Array(dustCount);
@@ -379,8 +398,10 @@ export default function Background3D() {
 
     // Page height is measured only when the layout changes, never inside the frame loop
     let maxScroll = 1;
+    let screenHeight = window.innerHeight;
     const measureScroll = () => {
-      maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+      screenHeight = window.innerHeight;
+      maxScroll = Math.max(document.documentElement.scrollHeight - screenHeight, 1);
     };
     measureScroll();
     const pageObserver = new ResizeObserver(measureScroll);
@@ -392,12 +413,19 @@ export default function Background3D() {
       mouseEnergy = Math.min(mouseEnergy + Math.hypot(nx - mouse.x, ny - mouse.y) * 1.5, 1);
       mouse.set(nx, ny);
     };
+    let lastScrollAt = 0;
     const handleScroll = () => {
       scrollTarget = window.scrollY;
+      lastScrollAt = performance.now();
     };
+    let lastWidth = window.innerWidth;
     const handleResize = () => {
       const w = window.innerWidth;
-      const h = window.innerHeight;
+      // A phone's address bar showing or hiding is not a real resize. Rebuilding
+      // the canvas for it would stutter in the middle of every scroll.
+      if (lite && w === lastWidth) return;
+      lastWidth = w;
+      const h = viewHeight();
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
@@ -423,10 +451,11 @@ export default function Background3D() {
 
       smoothMouse.lerp(mouse, 0.05);
       mouseEnergy *= 0.95;
-      scrollCurrent += (scrollTarget - scrollCurrent) * 0.08;
+      // Same glide speed whatever the frame rate
+      scrollCurrent += (scrollTarget - scrollCurrent) * (1 - Math.exp(-delta * 5));
 
       const progress = THREE.MathUtils.clamp(scrollCurrent / maxScroll, 0, 1);
-      const scrollUnits = scrollCurrent / window.innerHeight; // viewports scrolled
+      const scrollUnits = scrollCurrent / screenHeight; // viewports scrolled
 
       // Backdrop
       bgUniforms.uTime.value = elapsed;
@@ -439,13 +468,13 @@ export default function Background3D() {
       camera.lookAt(0, 0, 0);
 
       // Orb: sits beside the hero copy, then glides back and weaves between sections
-      const heroX = isMobile ? 0 : 6.8;
-      const weave = Math.sin(progress * Math.PI * 3) * (isMobile ? 2 : 8);
+      const heroX = isMobile ? 3.6 : 6.8;
+      const weave = isMobile ? 4.5 + Math.sin(progress * Math.PI * 3) * 0.7 : Math.sin(progress * Math.PI * 3) * 8;
       const t1 = THREE.MathUtils.smoothstep(scrollUnits, 0, 1.2);
       blob.position.x = THREE.MathUtils.lerp(heroX, weave, t1);
-      blob.position.y = (isMobile ? 4.5 : 0.6) + Math.sin(elapsed * 0.6) * 0.35 - t1 * 1.5;
+      blob.position.y = (isMobile ? 5.5 : 0.6) + Math.sin(elapsed * 0.6) * 0.35 - t1 * 1.5;
       blob.position.z = THREE.MathUtils.lerp(isMobile ? -4 : 0, -10, t1);
-      blob.scale.setScalar(isMobile ? 0.7 : 1);
+      blob.scale.setScalar(isMobile ? 0.55 : 1);
       blob.rotation.y = elapsed * 0.12 + smoothMouse.x * 0.6 + progress * 4;
       blob.rotation.x = smoothMouse.y * -0.4 + progress * 2;
       blobUniforms.uTime.value = elapsed;
@@ -479,16 +508,57 @@ export default function Background3D() {
       renderer.render(scene, camera);
     };
 
-    const loop = () => {
-      renderFrame();
-      frameId = requestAnimationFrame(loop);
-    };
     let ready = false;
+    let lastFrameAt = 0;
+    let frameTimeSum = 0;
+    let frameSamples = 0;
+    let slowWindows = 0;
+
+    // If a phone still can't keep up, fade the scene out for good and leave the static gradient
+    const giveUp = () => {
+      ready = false;
+      cancelAnimationFrame(frameId);
+      frameId = null;
+      renderer.domElement.style.opacity = "0";
+    };
+
+    const loop = () => {
+      frameId = requestAnimationFrame(loop);
+      if (!lite) {
+        renderFrame();
+        return;
+      }
+
+      const now = performance.now();
+      // While a finger is scrolling, leave the GPU to the page so scrolling stays smooth
+      if (now - lastScrollAt < 180) {
+        lastFrameAt = 0;
+        return;
+      }
+      if (lastFrameAt && now - lastFrameAt < 30) return; // about 30 frames per second
+
+      if (lastFrameAt) {
+        frameTimeSum += now - lastFrameAt;
+        frameSamples += 1;
+        if (frameSamples === 45) {
+          slowWindows = frameTimeSum / frameSamples > 60 ? slowWindows + 1 : 0;
+          frameTimeSum = 0;
+          frameSamples = 0;
+          if (slowWindows >= 2) {
+            giveUp();
+            return;
+          }
+        }
+      }
+      lastFrameAt = now;
+      renderFrame();
+    };
     const handleVisibility = () => {
       if (document.hidden) {
         if (frameId !== null) cancelAnimationFrame(frameId);
         frameId = null;
       } else if (frameId === null && ready) {
+        lastFrameAt = 0;
         clock.getDelta();
         loop();
       }
@@ -505,7 +575,8 @@ export default function Background3D() {
         clock.getDelta();
         if (!document.hidden) loop();
         requestAnimationFrame(() => {
-          renderer.domElement.style.opacity = "1";
+          // Text sits directly over the scene on a narrow screen, so keep it subtle there
+          renderer.domElement.style.opacity = isMobile ? "0.5" : "1";
         });
       });
 

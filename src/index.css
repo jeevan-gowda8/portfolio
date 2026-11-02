@@ -508,6 +508,95 @@ h1, h2, h3, h4, h5, h6, .font-display {
   to { transform: translateX(-50%); }
 }
 
+/* Hero scroll hint (CSS animations run off the main thread) */
+.hero-scroll-dot {
+  animation: hero-scroll-dot 1.8s ease-in-out infinite;
+}
+
+.hero-scroll-chevron {
+  animation: hero-scroll-chevron 1.6s ease-in-out infinite;
+}
+
+@keyframes hero-scroll-dot {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(12px); opacity: 0.2; }
+}
+
+@keyframes hero-scroll-chevron {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+/* Soft colour fields behind the page on phones and tablets */
+.static-aurora {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(70% 40% at 85% 12%, rgba(241, 213, 158, 0.55), transparent 70%),
+    radial-gradient(65% 40% at 10% 72%, rgba(246, 219, 204, 0.5), transparent 70%),
+    radial-gradient(70% 35% at 55% 100%, rgba(222, 230, 236, 0.45), transparent 70%);
+}
+
+/* Phones and tablets: blurring what sits behind every card is very expensive
+   on a mobile GPU, so glass becomes a near-solid surface instead */
+@media (hover: none), (pointer: coarse), (max-width: 768px) {
+  :root {
+    --glass-bg: rgba(250, 246, 238, 0.9);
+    --glass-bg-strong: rgba(250, 246, 238, 0.96);
+    --glass-blur: none;
+  }
+
+  *, *::before, *::after {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  .arch-card-flat {
+    background-color: rgba(250, 246, 238, 0.85);
+  }
+
+  .btn-secondary {
+    background-color: rgba(250, 246, 238, 0.9);
+  }
+
+  .marquee {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  /* Without blur, a see-through header would show page text scrolling behind it */
+  header {
+    background-color: var(--ivory-canvas) !important;
+  }
+}
+
+/* Phone layout: long words wrap and nothing can push the page wider than the screen */
+@media (max-width: 768px) {
+  main div, footer div {
+    min-width: 0;
+  }
+
+  main a, main p, main span, main h1, main h2, main h3, footer a, footer p {
+    overflow-wrap: break-word;
+  }
+
+  .arch-card, .arch-card-flat {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .display-xl {
+    font-size: 34px;
+    line-height: 38px;
+  }
+}
+
 /* Selection & keyboard focus */
 ::selection {
   background: rgba(197, 160, 89, 0.3);

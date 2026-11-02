@@ -5,7 +5,17 @@ import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } fr
  * 3D perspective card that tilts toward the cursor with a soft gold glare.
  * Falls back to a flat card on touch devices.
  */
-export default function TiltCard({ children, className = "", style = {}, max = 7, onClick, ...rest }) {
+const canTilt = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+export default function TiltCard({ max, ...props }) {
+  if (!canTilt) {
+    const { children, ...rest } = props;
+    return <motion.div {...rest}>{children}</motion.div>;
+  }
+  return <InteractiveTiltCard max={max} {...props} />;
+}
+
+function InteractiveTiltCard({ children, className = "", style = {}, max = 7, onClick, ...rest }) {
   const ref = useRef(null);
   const px = useMotionValue(0.5);
   const py = useMotionValue(0.5);
