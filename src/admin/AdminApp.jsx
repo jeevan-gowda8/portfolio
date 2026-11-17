@@ -462,7 +462,7 @@ export default function AdminApp() {
             className="btn-secondary"
             style={{ textDecoration: "none" }}
           >
-            <FaExternalLinkAlt /> View Live Site
+            <FaExternalLinkAlt /> <span className="admin-hide-mobile">View Live Site</span>
           </a>
 
           {/* Save & Publish Button */}

@@ -198,6 +198,13 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  /* Stays in place under the header while the page scrolls */
+  position: sticky;
+  top: 70px;
+  align-self: flex-start;
+  height: calc(100vh - 70px);
+  overflow-y: auto;
+  flex-shrink: 0;
 }
 
 .admin-nav-item {
@@ -654,7 +661,38 @@
     width: 100%;
     flex-direction: row;
     overflow-x: auto;
+    overflow-y: hidden;
     padding: 12px;
+    /* On small screens the tab bar sticks just below the header */
+    height: auto;
+    align-self: stretch;
+    z-index: 40;
+    border-right: none;
+    border-bottom: 1px solid var(--admin-border);
+  }
+  .admin-sidebar .admin-nav-item {
+    width: auto;
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 9px 14px;
+  }
+}
+
+/* Phones: a compact one-line header */
+@media (max-width: 600px) {
+  .admin-header {
+    padding: 0 14px;
+  }
+  .admin-brand-info,
+  .admin-db-status-pill,
+  .admin-hide-mobile {
+    display: none;
+  }
+  .admin-header-actions {
+    gap: 8px;
+  }
+  .admin-header-actions > * {
+    white-space: nowrap;
   }
   .react-skill-card {
     grid-template-columns: 1fr;
