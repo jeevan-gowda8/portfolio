@@ -115,6 +115,30 @@ export async function loginAdmin(email, password) {
 }
 
 /**
+ * Change the admin password (the current password is checked by the server)
+ */
+export async function changeAdminPassword({ email, currentPassword, newPassword }, token) {
+  try {
+    const res = await fetch(`${API_BASE}/admin/change-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ email, currentPassword, newPassword })
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      return { success: true };
+    }
+    return { success: false, error: data.error || 'Could not change the password' };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+/**
  * Save Portfolio data to backend / Supabase
  */
 export async function savePortfolioData(portfolioData, token) {

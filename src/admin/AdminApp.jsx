@@ -6,6 +6,7 @@ import {
   fetchLivePortfolio,
   savePortfolioData,
   loginAdmin,
+  changeAdminPassword,
   fetchInboundMessages,
   updateMessageStatus,
   deleteMessage,
@@ -219,6 +220,41 @@ export default function AdminApp() {
     ...p,
     personal: { ...p.personal, [field]: value }
   }));
+
+  // Change password (Settings tab)
+  const emptyPasswordForm = { current: "", next: "", confirm: "" };
+  const [passwordForm, setPasswordForm] = useState(emptyPasswordForm);
+  const [passwordError, setPasswordError] = useState("");
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    setPasswordError("");
+    if (passwordForm.next.trim().length < 8) {
+      setPasswordError("The new password must be at least 8 characters.");
+      return;
+    }
+    if (passwordForm.next !== passwordForm.confirm) {
+      setPasswordError("The new passwords don't match.");
+      return;
+    }
+    if (!user?.email) {
+      setPasswordError("Please sign out and sign in again, then try once more.");
+      return;
+    }
+    setIsChangingPassword(true);
+    const res = await changeAdminPassword(
+      { email: user.email, currentPassword: passwordForm.current, newPassword: passwordForm.next },
+      token
+    );
+    setIsChangingPassword(false);
+    if (res.success) {
+      setPasswordForm(emptyPasswordForm);
+      showToast("Password changed. Use the new password next time you sign in.");
+    } else {
+      setPasswordError(res.error || "Could not change the password.");
+    }
+  };
 
   const handleDownloadBackup = () => {
     const blob = new Blob([JSON.stringify(portfolio, null, 2)], { type: "application/json" });
@@ -1166,6 +1202,60 @@ export default function AdminApp() {
                     onChange={(e) => updatePersonal("availability", e.target.value)}
                   />
                 </div>
+              </div>
+
+              {/* Change password */}
+              <div className="admin-card">
+                <h3 className="admin-settings-title">Change Password</h3>
+                <p className="admin-settings-hint">Takes effect immediately. No need to click Save &amp; Publish.</p>
+                <form onSubmit={handleChangePassword}>
+                  <div className="admin-form-group">
+                    <label className="admin-label">Current Password</label>
+                    <input
+                      type="password"
+                      required
+                      className="admin-input"
+                      autoComplete="current-password"
+                      value={passwordForm.current}
+                      onChange={(e) => setPasswordForm((f) => ({ ...f, current: e.target.value }))}
+                    />
+                  </div>
+                  <div className="admin-grid-2">
+                    <div className="admin-form-group">
+                      <label className="admin-label">New Password</label>
+                      <input
+                        type="password"
+                        required
+                        minLength={8}
+                        className="admin-input"
+                        autoComplete="new-password"
+                        placeholder="At least 8 characters"
+                        value={passwordForm.next}
+                        onChange={(e) => setPasswordForm((f) => ({ ...f, next: e.target.value }))}
+                      />
+                    </div>
+                    <div className="admin-form-group">
+                      <label className="admin-label">Confirm New Password</label>
+                      <input
+                        type="password"
+                        required
+                        minLength={8}
+                        className="admin-input"
+                        autoComplete="new-password"
+                        value={passwordForm.confirm}
+                        onChange={(e) => setPasswordForm((f) => ({ ...f, confirm: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+                  {passwordError && (
+                    <p style={{ color: "var(--admin-danger)", fontSize: "0.85rem", margin: "0 0 12px" }}>
+                      {passwordError}
+                    </p>
+                  )}
+                  <button type="submit" className="btn-gold" disabled={isChangingPassword}>
+                    {isChangingPassword ? "Updating..." : "Update Password"}
+                  </button>
+                </form>
               </div>
 
               {/* Backup & account */}

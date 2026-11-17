@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import crypto from 'crypto';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { supabase, isSupabaseConfigured } from './supabase.js';
@@ -53,13 +54,33 @@ let localMessages = [
   }
 ];
 
-// Helper: Verify Admin Token/Password
+// Passwords are stored as "scrypt$<salt>$<hash>". Older rows that still hold the
+// plain password keep working until the password is next changed.
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.scryptSync(password, salt, 64).toString('hex');
+  return `scrypt$${salt}$${hash}`;
+}
+
+function passwordMatches(stored, password) {
+  if (typeof stored !== 'string' || typeof password !== 'string') return false;
+  if (stored.startsWith('scrypt$')) {
+    const [, salt, hash] = stored.split('$');
+    const expected = Buffer.from(hash || '', 'hex');
+    const actual = crypto.scryptSync(password, salt || '', 64);
+    return expected.length === actual.length && crypto.timingSafeEqual(expected, actual);
+  }
+  return stored === password;
+}
+
+// Helper: Verify Admin Token
+// (The raw ADMIN_PASSWORD is deliberately not accepted here, so an old password
+// stops working everywhere once it has been changed from the admin panel.)
 function verifyAdmin(req, res, next) {
   const adminKey = req.headers['x-admin-key'] || req.headers['authorization']?.replace(/^Bearer\s+/i, '');
-  const expectedPassword = process.env.ADMIN_PASSWORD;
   const expectedKey = process.env.JWT_SECRET || 'super_secret_architectural_jwt_key_change_in_production';
 
-  if (!adminKey || ((!expectedPassword || adminKey !== expectedPassword) && adminKey !== expectedKey && (process.env.JWT_SECRET || adminKey !== 'admin-authenticated-token'))) {
+  if (!adminKey || (adminKey !== expectedKey && (process.env.JWT_SECRET || adminKey !== 'admin-authenticated-token'))) {
     return res.status(401).json({
       success: false,
       error: 'Unauthorized: Valid admin credentials required.'
@@ -121,7 +142,12 @@ app.post('/api/admin/login', async (req, res) => {
         .eq('email', cleanEmail)
         .maybeSingle();
 
-      if (adminUser && adminUser.password_hash === cleanPassword) {
+      if (adminUser) {
+        // A database password takes priority, so an old ADMIN_PASSWORD
+        // stops working once the password has been changed in the admin panel
+        if (!passwordMatches(adminUser.password_hash, cleanPassword)) {
+          return res.status(401).json({ success: false, error: 'Invalid credentials. Access denied.' });
+        }
         return res.json({
           success: true,
           message: 'Authentication successful (via Supabase database)',
@@ -137,7 +163,7 @@ app.post('/api/admin/login', async (req, res) => {
     }
   }
 
-  // 2. Check environment credentials
+  // 2. Check environment credentials (only when the database has no password for this email)
   if (configuredPassword && cleanEmail === configuredEmail && cleanPassword === configuredPassword) {
     return res.json({
       success: true,
@@ -154,6 +180,59 @@ app.post('/api/admin/login', async (req, res) => {
     success: false,
     error: 'Invalid credentials. Access denied.'
   });
+});
+
+// POST /api/admin/change-password -> Protected: replaces the admin password (stored hashed in Supabase)
+app.post('/api/admin/change-password', verifyAdmin, async (req, res) => {
+  const { email, currentPassword, newPassword } = req.body || {};
+  const configuredEmail = (process.env.ADMIN_EMAIL || 'jeevangowdajeevan080@gmail.com').toLowerCase();
+  const configuredPassword = process.env.ADMIN_PASSWORD;
+
+  if (!email || !currentPassword || !newPassword) {
+    return res.status(400).json({ success: false, error: 'Current and new password are required.' });
+  }
+
+  const cleanEmail = String(email).toLowerCase().trim();
+  const cleanCurrent = String(currentPassword).trim();
+  const cleanNew = String(newPassword).trim();
+
+  if (cleanNew.length < 8) {
+    return res.status(400).json({ success: false, error: 'The new password must be at least 8 characters.' });
+  }
+  if (cleanNew === cleanCurrent) {
+    return res.status(400).json({ success: false, error: 'The new password must be different from the current one.' });
+  }
+  if (!isSupabaseConfigured || !supabase) {
+    return res.status(503).json({ success: false, error: 'Changing the password needs the Supabase database to be connected.' });
+  }
+
+  try {
+    const { data: adminUser, error: readError } = await supabase
+      .from('admin_users')
+      .select('*')
+      .eq('email', cleanEmail)
+      .maybeSingle();
+    if (readError) throw readError;
+
+    const currentIsValid = adminUser
+      ? passwordMatches(adminUser.password_hash, cleanCurrent)
+      : Boolean(configuredPassword && cleanEmail === configuredEmail && cleanCurrent === configuredPassword);
+
+    if (!currentIsValid) {
+      return res.status(401).json({ success: false, error: 'Current password is incorrect.' });
+    }
+
+    const password_hash = hashPassword(cleanNew);
+    const { error: writeError } = adminUser
+      ? await supabase.from('admin_users').update({ password_hash }).eq('email', cleanEmail)
+      : await supabase.from('admin_users').insert({ email: cleanEmail, password_hash, role: 'admin' });
+    if (writeError) throw writeError;
+
+    return res.json({ success: true, message: 'Password updated.' });
+  } catch (err) {
+    console.error('Password change failed:', err.message);
+    return res.status(500).json({ success: false, error: 'Could not update the password. Please try again.' });
+  }
 });
 
 /* ═════════════════════════════════════════════════════════════════════
