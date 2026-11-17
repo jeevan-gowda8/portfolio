@@ -44,7 +44,7 @@ export default function AdminApp() {
   });
 
   // Login form state (pre-filled with seeded admin credentials)
-  const [loginEmail, setLoginEmail] = useState("jeevangowdajeevan080@gmail.com");
+  const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -356,7 +356,8 @@ export default function AdminApp() {
                 className="admin-input"
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
-                placeholder="admin@jeevangowda.dev"
+                placeholder="Enter admin email..."
+                autoComplete="username"
               />
             </div>
 
